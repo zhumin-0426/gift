@@ -1,0 +1,15 @@
+.display-flex {
+	display: flex;
+	align-items: center;
+}
+
+.fon-28 {
+	font-size: 28rpx;
+}
+
+.ipt-pls {
+	font-size: 28rpx;
+	line-height: 40rpx;
+	letter-spacing: 0rpx;
+	color: #afafaf;
+}
