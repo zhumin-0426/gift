@@ -87,8 +87,17 @@
 
 			}
 		},
+		onLoad(){
+			this.getCardList()
+		},
 		methods: {
-
+            getCardList:function(){
+				this.$http('/coupon/getCouponList',{
+					couponBelongComid:"1"
+				},"post").then(function(res){
+					console.log("res",res)
+				})
+			}
 		}
 	}
 </script>

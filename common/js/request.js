@@ -9,7 +9,7 @@ let http = function(url, params, method) {
 		}
 		uni.request({
 			url: siteinfo.baseUrl+url,
-			data: params,
+			data:JSON.stringify(params),
 			header: {
 				'content-type': 'application/json'
 			},

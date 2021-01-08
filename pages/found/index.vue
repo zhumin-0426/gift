@@ -138,23 +138,31 @@
 				</view>
 			</view>
 		</view>
-	    <tabBar :tabBarActive="tabBarActive"></tabBar>
+		<tabBar :tabBarActive="tabBarActive"></tabBar>
 	</view>
 </template>
 
 <script>
 	import tabBar from '../../components/footer.vue'
 	export default {
-		components:{
+		components: {
 			tabBar
 		},
 		data() {
 			return {
 				dynamic: false,
-				tabItem:[
-					{txt:"推荐",id:"1"},
-					{txt:"直播",id:"2"},
-					{txt:"视频",id:"3"}
+				tabItem: [{
+						txt: "推荐",
+						id: "1"
+					},
+					{
+						txt: "直播",
+						id: "2"
+					},
+					{
+						txt: "视频",
+						id: "3"
+					}
 				],
 				// 底部导航
 				tabBarActive: {
@@ -162,8 +170,13 @@
 					roundLeft: "316rpx",
 					mulchLeft: "316rpx",
 					elementLeft: "346rpx"
-				}
+				},
+				// 我的发现
+				myFoundData: []
 			}
+		},
+		onLoad() {
+			this.myFound()
 		},
 		methods: {
 			moreDynamicOpen: function() {
@@ -171,6 +184,32 @@
 			},
 			moreDynamicClose: function() {
 				this.dynamic = false;
+			},
+			// 我的发现
+			myFound: function() {
+				const that = this;
+				this.$http('/users/getUserFollow', {}, 'post').then(function(res) {
+					console.log("我的发现", res);
+					if (res.data.status == 'success') {
+						that.myFoundData = res.data.usersFollowByList
+					}
+				})
+			},
+			// 关注
+			clickFocus: function() {
+				this.$http('/users/saveFollow', {
+					followSupperId: ""
+				}, 'post').then(function(res) {
+					console.log('关注',res)
+				})
+			},
+			// 点赞
+			giveLike: function() {
+				this.$http('/users/setCollectGood', {
+					collectCommodityId: "",
+				}, 'post').then(function(res) {
+					console.log('点赞',res)
+				})
 			}
 		}
 	}

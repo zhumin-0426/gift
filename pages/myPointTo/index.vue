@@ -13,31 +13,6 @@
 								<image src="/static/images/found/logo1.png" mode="widthFix"></image>
 							</view>
 						</view>
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo2.png" mode="widthFix"></image>
-							</view>
-						</view>
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo3.png" mode="widthFix"></image>
-							</view>
-						</view>
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo4.png" mode="widthFix"></image>
-							</view>
-						</view>
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo5.png" mode="widthFix"></image>
-							</view>
-						</view>
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo3.png" mode="widthFix"></image>
-							</view>
-						</view>
 					</view>
 				</view>
 			</view>
@@ -52,8 +27,15 @@
 
 			}
 		},
+		onLoad(){
+			this.myPointData()
+		},
 		methods: {
-
+            myPointData:function(){
+				this.$http('/users/getUserFollow',{},'post').then(function(res){
+					console.log(res)
+				})
+			}
 		}
 	}
 </script>

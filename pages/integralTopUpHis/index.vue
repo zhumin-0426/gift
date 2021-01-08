@@ -51,11 +51,20 @@
 	export default {
 		data() {
 			return {
-
+			
 			}
 		},
+		onLoad(){
+			this.topUp()
+		},
 		methods: {
-
+			topUp: function() {
+				this.$http('/changer/getChangerRecordList', {
+					selDate: ''
+				}, 'post').then(function(res) {
+					console.log(res);
+				})
+			}
 		}
 	}
 </script>

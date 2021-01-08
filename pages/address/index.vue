@@ -1,32 +1,39 @@
 <template>
 	<view class="container">
-		<view class="address">
+		<view class="address" v-for="(item,index) in addressList" :key="index">
 			<view class="address-sel">
-				
+
 			</view>
 			<view class="address-main">
 				<view class="user-msg">
 					<view class="name">
-						朱敏
+						{{item.addressUsername}}
 					</view>
 					<view class="phone">
-						18820854754
+						{{item.addressPhone}}
 					</view>
-					<view class="default">
+					<view class="default" v-if="item.addressIsDefault==1">
 						[默认]
 					</view>
 				</view>
 				<view class="address-txt">
-					江西省 九江市 修水县 李竹村17组
+					<text>{{item.addressProvice}}</text>
+					<text>{{item.addressCity}}</text>
+					<text>{{item.addressArea}}</text>
+					<text>{{item.addressDetail}}</text>
 				</view>
 			</view>
 			<view class="editor">
-				<image src="/static/images/address/editor.png" mode="widthFix"></image>
+				<navigator :url="'/pages/address/editor?id='+item.id" hover-class="none">
+					<image src="/static/images/address/editor.png" mode="widthFix"></image>
+				</navigator>
 			</view>
 		</view>
-		<view class="add-address-btn">
-			添加地址
-		</view>
+		<navigator url="/pages/address/add" hover-class="none">
+			<view class="add-address-btn">
+				添加地址
+			</view>
+		</navigator>
 	</view>
 </template>
 
@@ -34,11 +41,22 @@
 	export default {
 		data() {
 			return {
-
+				addressList: []
 			}
 		},
+		onLoad() {
+			this.getAddressList()
+		},
 		methods: {
-
+			getAddressList() {
+				const that = this;
+				this.$http("/address/getUsersAddressList", {}, "post").then(function(res) {
+					console.log("res", res);
+					if (res.data.status == "success") {
+						that.addressList = res.data.usersAddressByList
+					}
+				})
+			}
 		}
 	}
 </script>
@@ -53,37 +71,58 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			.address-sel{
+
+			.address-sel {
 				width: 30rpx;
 				height: 30rpx;
 				background-color: red;
 				border-radius: 50%;
 			}
-			.address-main{
-				.user-msg{
+
+			.address-main {
+				width: 80%;
+				margin-left: 22rpx;
+				.user-msg {
 					display: flex;
 					align-items: center;
 					color: #333;
 					font-size: 28rpx;
-					.phone{
+
+					.phone {
 						margin: 0 22rpx;
 					}
 				}
-				.address-txt{
+
+				.address-txt {
 					color: #333;
 					font-size: 28rpx;
+					display: flex;
+					text{
+						margin-right: 11rpx;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						display: -webkit-box;
+						-webkit-line-clamp: 1;
+						-webkit-box-orient: vertical;
+						word-break: break-all;
+					}
 				}
 			}
-			.editor{
+
+			.editor {
 				width: 40rpx;
 				height: 40rpx;
-				image{
+
+				image {
 					display: block;
 					width: 100%;
-				};
+				}
+
+				;
 			}
 		}
-		.add-address-btn{
+
+		.add-address-btn {
 			width: 90%;
 			line-height: 80rpx;
 			text-align: center;

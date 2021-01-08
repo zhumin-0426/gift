@@ -8,58 +8,39 @@
 		</view>
 		<view class="main">
 			<!-- 记录模块 -->
-			<view class="history">
-				<view class="top">
-					<view class="left">
+			<view class="history" v-for="(item,index) in cashHistoryData" :key="index">
+				<view class="top" v-if="item.getValue!=null">
+					<view class="left" >
 						<view class="date">
-							2020年7月
+							<!-- 2020年7月 -->
+							{{item.getdate}}
 						</view>
 						<view class="cash-all-history">
-							支付 2600分 收取2800分
+							支付 {{item.payValue}}分 收取{{item.getValue}}分
 						</view>
 					</view>
 					<view class="date-icon">
 						<image src="/static/images/top-up-history/date-icon.png" mode="widthFix"></image>
 					</view>
 				</view>
-				<view class="history-warpper">
+				<view class="history-warpper" v-else>
 					<view class="history-item">
 						<view class="left">
 							<view class="user-pic">
-								<image src="/static/images/top-up-history/user-pic.jpeg" mode="widthFix"></image>
+								<image :src="imageUrl+item.user_heard" mode="widthFix"></image>
 							</view>
 							<view class="msg">
 								<view class="name">
-									走来走去
+									{{item.userName}}
 								</view>
 								<view class="date">
-									7月16日11:12
+									{{item.getdate}}
 								</view>
 							</view>
 						</view>
 						<view class="right">
 							<view class="integral">
-								+ 2000
-							</view>
-						</view>
-					</view>
-					<view class="history-item">
-						<view class="left">
-							<view class="user-pic">
-								<image src="/static/images/top-up-history/user-pic.jpeg" mode="widthFix"></image>
-							</view>
-							<view class="msg">
-								<view class="name">
-									走来走去
-								</view>
-								<view class="date">
-									7月16日11:12
-								</view>
-							</view>
-						</view>
-						<view class="right">
-							<view class="integral" style="color: #1a1a1a;">
-								- 2000
+								{{item.payValue}}
 							</view>
 						</view>
 					</view>
@@ -73,11 +54,25 @@
 	export default {
 		data() {
 			return {
-
+				// 图片路径
+				imageUrl:"",
+				cashHistoryData: []
 			}
 		},
+		onLoad() {
+			this.integralCashHistory();
+			this.$nextTick(function(){
+				this.imageUrl = this.$url.imageUrl;
+			})
+		},
 		methods: {
-
+			integralCashHistory: function() {
+				const that = this;
+				this.$http('/score/getScoreRecordList', {}, 'post').then(function(res) {
+					console.log(res);
+					that.cashHistoryData = res.data.scoreRecordByList;
+				})
+			}
 		}
 	}
 </script>
@@ -116,7 +111,8 @@
 						font-size: 26rpx;
 						color: #818898;
 					}
-					.cash-all-history{
+
+					.cash-all-history {
 						font-size: 26rpx;
 						color: #818898;
 					}

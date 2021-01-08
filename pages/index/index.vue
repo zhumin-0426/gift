@@ -3,21 +3,21 @@
 		<view class="status_bar">
 			<!-- 这里是状态栏 -->
 		</view>
-		<view class="herder">
-			<view class="top">
-				<view class="logo">
+		<view class="herder w100 box-sz pd-l-22 pd-r-22">
+			<view class="top dis-flex jf-bw lf-0 tp-0 pd-t-22 pd-b-22">
+				<view class="logo dis-flex">
 					<image src="/static/images/index/logo.png" mode="widthFix"></image>
 				</view>
-				<view class="search">
-					<view class="search-icon">
+				<view class="search pd-r-22 pd-l-22 bg-fff dis-flex al-items-center jf-bw bd-r-60">
+					<view class="search-icon dis-flex">
 						<image class="search-icon" src="/static/images/index/search-icon.png" mode="widthFix"></image>
 					</view>
 					<input class="search-ipt" type="text" value="" placeholder="搜索" placeholder-class="search-pls" />
-					<view class="scan">
-						<image class="scan" src="/static/images/index/scan.png" mode="widthFix"></image>
+					<view class="scan dis-flex">
+						<image class="scan w100" src="/static/images/index/scan.png" mode="widthFix"></image>
 					</view>
 				</view>
-				<view class="user-pic">
+				<view class="user-pic dis-flex">
 					<image src="../../static/images/index/user-pic.png" mode="widthFix"></image>
 				</view>
 			</view>
@@ -35,10 +35,10 @@
 		</view>
 		<view class="content">
 			<!-- 导航栏 -->
-			<view class="nav">
-				<view class="nav-item" v-for="(navItem,navIndex) in navList" :key="navIndex">
+			<view class="nav dis-flex mg-b-24 flx-w w100 jf-bw">
+				<view class="nav-item mg-b-44 txt-center" v-for="(navItem,navIndex) in navList" :key="navIndex">
 					<navigator hover-class="none">
-						<view class="nav-item-icon">
+						<view class="nav-item-icon w100">
 							<image :src="imageUrl+navItem.imgUrl" mode="widthFix"></image>
 						</view>
 						<text>{{navItem.urlName}}</text>
@@ -46,15 +46,15 @@
 				</view>
 			</view>
 			<!-- 信息栏 -->
-			<view class="tig-bar">
+			<view class="tig-bar box-sz pd-l-22 pd-r-22 bd-r-42 dis-flex al-items-center jf-bw">
 				<view class="tig-icon">
 					<image src="../../static/images/index/tig-icon.png" mode="widthFix"></image>
 				</view>
-				<view class="tig-txt">
-					<view class="tig-txt-title">
+				<view class="tig-txt fon-26 col-fff dis-flex al-items-center">
+					<view class="tig-txt-title mg-r-40">
 						最新消息
 					</view>
-					<view class="tig-txt-main">
+					<view class="tig-txt-main fl-hd">
 						"NIKE ADIDAS 进驻顺的积分..."
 					</view>
 				</view>
@@ -63,24 +63,24 @@
 				</view>
 			</view>
 			<!-- 商品栏 -->
-			<view class="goods-bar">
-				<view class="goods-bar-item">
-					<image src="../../static/images/index/goods-bar-item1.png" mode="widthFix"></image>
+			<view class="goods-bar w100 dis-flex al-items-center jf-bw mg-t-70 mg-b-28">
+				<view class="goods-bar-item bg-fff bd-r-14">
+					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item1.png" mode="widthFix"></image>
 				</view>
-				<view class="goods-bar-item">
-					<image src="../../static/images/index/goods-bar-item2.png" mode="widthFix"></image>
+				<view class="goods-bar-item bg-fff bd-r-14">
+					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item2.png" mode="widthFix"></image>
 				</view>
-				<view class="goods-bar-item">
-					<image src="../../static/images/index/goods-bar-item3.png" mode="widthFix"></image>
+				<view class="goods-bar-item bg-fff bd-r-14">
+					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item3.png" mode="widthFix"></image>
 				</view>
 			</view>
 			<!-- 广告 -->
-			<view class="adversing">
-				<image src="/static/images/index/adversing.png" mode="widthFix"></image>
+			<view class="adversing w100 mg-b-28">
+				<image class="w100" src="/static/images/index/adversing.png" mode="widthFix"></image>
 			</view>
 			<!-- 商品列表 -->
 			<view class="goods-list">
-				<view class="tab">
+				<view class="tab w100 dis-flex flx-w jf-bw">
 					<view @click="changeTabObj(item.id,index)" :class="item.id==currentTabObj?'tab-item-active':'tab-item'" v-for="(item,index) in goodsListTab"
 					 :key="index">
 						<view class="tab-item-title">{{item.title}}</view>
@@ -88,29 +88,30 @@
 						<view class="tab-item-line"></view>
 					</view>
 				</view>
-				<view class="tab-change-obj">
-					<view class="goods" v-for="(goodsItem,goodsIndex) in goodsListObj" :key="goodsIndex">
-						<image src="/static/images/index/goods1.png" mode="widthFix"></image>
-						<view class="goods-title">
-							CANEN 韩国小眼正太 护航
-							者儿童座椅 无焊接一体成型
+				<view class="tab-change-obj w100 mg-t-30 mg-b-16 dis-flex flx-w jf-bw">
+					<view class="goods box-sz fl-hd bg-fff bd-r-14 mg-b-22" @click="openGoodsDel($event)" :data-id="goodsItem.id"
+					 v-for="(goodsItem,goodsIndex) in goodsListObj" :key="goodsIndex">
+						<image class="ds-b mx-w-100" :src="imageUrl+goodsItem.imglist[0].imgUrl" mode="widthFix"></image>
+						<view class="goods-title pd-t-22 pd-r-22 pd-b-22 pd-l-22 fon-24 txt-justify txt-clamp-2">
+							{{goodsItem.commodityName}}
 						</view>
-						<view class="exchange-btn">
+						<view class="exchange-btn fl-l pd-b-2 pd-t-2 pd-l-4 pd-r-4 mg-b-22 mg-l-22 bg-fff bd-r-4 fon-18 col-e61 txt-center">
 							热门兑换
 						</view>
-						<view class="goods-msg">
-							<view class="left">
-								<image src="/static/images/index/integral-icon.png" mode="widthFix"></image>
-								<text>2800积分</text>
+						<view class="goods-msg box-sz w100 pd-b-22 pd-l-22 pd-r-22 dis-flex al-items-center jf-bw">
+							<view class="left dis-flex al-items-center">
+								<image class="mg-r-10" src="/static/images/index/integral-icon.png" mode="widthFix"></image>
+								<text class="fon-20 col-ff8">{{goodsItem.defaultScore}}积分</text>
 							</view>
-							<view class="right">
-								10万<text>+ </text>人兑换
+							<view class="right fon-20 col-aea">
+								{{goodsItem.defaultScore}}人兑换
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
+	    <!-- 底部导航栏 -->
 		<tabBar :tabBarActive="tabBarActive"></tabBar>
 	</view>
 </template>
@@ -118,64 +119,73 @@
 <script>
 	import tabBar from '../../components/footer.vue'
 	export default {
-		components:{
+		components: {
 			tabBar
 		},
 		data() {
 			return {
 				// 图片路径
-				imageUrl:"",
+				imageUrl: "",
 				// 轮播
-				bannerList:[],
+				bannerList: [],
 				// 导航
-				navList:[],
+				navList: [],
 				// 商品列表tab
 				goodsListTab: [],
 				currentTabObj: 1,
 				// 商品列表 obj
-				goodsListObj:[],
-				goodsListid:0,
+				goodsListObj: [],
+				goodsListid: 0,
 				// 底部导航
 				tabBarActive: {
-					state:1,
-				    roundLeft:"14rpx",
-					mulchLeft:"14rpx",
-					elementLeft:"46rpx"
+					state: 1,
+					roundLeft: "14rpx",
+					mulchLeft: "14rpx",
+					elementLeft: "46rpx"
 				}
 			}
 		},
-		created(){
+		onLoad() {
 			this.getIndexData();
-			this.$nextTick(function(){
+			this.$nextTick(function() {
 				this.imageUrl = this.$url.imageUrl;
 			})
 		},
 		methods: {
-			getIndexData:function(){
+			// 首页数据
+			getIndexData: function() {
 				const that = this;
-				this.$http("/index/getIndexList",{},"post").then(function(res){
-					if(res.statusCode==200){
-						console.log("首页数据请求",res);
+				this.$http("/index/getIndexList", {}, "post").then(function(res) {
+					if (res.statusCode == 200) {
+						console.log("首页数据请求", res);
 						// 轮播
 						that.bannerList = res.data.indexList.bannerlist;
 						// 导航
 						that.navList = res.data.indexList.iconlist[0].iconurllist;
-						// 商品列表tab
-						that.goodsListTab =  res.data.indexList.linklist;
-						// 商品列表obj
-						that.goodsListObj =  res.data.indexList.linklist[0].commoditylist;
+						// 商品列表栏
+						that.goodsListTab = res.data.indexList.linklist;
+						// 商品列表
+						that.goodsListObj = res.data.indexList.linklist[0].commoditylist;
 					}
 				})
 			},
-			changeTabObj: function(id,index) {
+			// tab切换
+			changeTabObj: function(id, index) {
 				this.currentTabObj = id;
 				this.goodsListObj = this.goodsListTab[index].commoditylist;
 			},
+			// 详情跳转
+			openGoodsDel: function(event) {
+				let id = event.currentTarget.dataset.id;
+				uni.navigateTo({
+					url: "/pages/goodsDetail/index?id=" + id
+				})
+			}
 		}
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 	page {
 		background-color: #f6f6f6;
 	}
@@ -187,22 +197,28 @@
 		}
 
 		.herder {
-			box-sizing: border-box;
-			width: 100%;
 			height: 500rpx;
-			padding: 0 22rpx;
 			background-image: url(../../static/images/index/herder-pic.png);
 			background-repeat: no-repeat;
 			background-size: 100%;
 
-			.top {
-				padding: 22rpx 0;
-				display: flex;
-				justify-content: space-between;
+			.logo {
+				width: 140rpx;
 
-				.logo {
-					width: 140rpx;
-					display: flex;
+				image {
+					max-width: 100%;
+					align-self: center;
+				}
+			}
+
+			.search {
+
+				width: 430rpx;
+				height: 60rpx;
+				border: solid 1rpx #f2f2f2;
+
+				.search-icon {
+					width: 36rpx;
 
 					image {
 						max-width: 100%;
@@ -210,57 +226,30 @@
 					}
 				}
 
-				.search {
-
-					width: 430rpx;
-					height: 60rpx;
-					padding: 0 22rpx;
-					background-color: #ffffff;
-					border-radius: 30rpx;
-					border: solid 1rpx #f2f2f2;
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-
-					.search-icon {
-						width: 36rpx;
-						display: flex;
-
-						image {
-							max-width: 100%;
-							align-self: center;
-
-						}
-					}
-
-					.search-ipt {
-						width: 70%;
-					}
-
-					.search-pls {
-						font-size: 24rpx;
-						color: #a3a3a3;
-					}
-
-					.scan {
-						width: 36rpx;
-						display: flex;
-
-						image {
-							max-width: 100%;
-							align-self: center;
-						}
-					}
+				.search-ipt {
+					width: 70%;
 				}
 
-				.user-pic {
-					width: 60rpx;
-					display: flex;
+				.search-pls {
+					font-size: 24rpx;
+					color: #a3a3a3;
+				}
+
+				.scan {
+					width: 36rpx;
 
 					image {
-						max-width: 100%;
 						align-self: center;
 					}
+				}
+			}
+
+			.user-pic {
+				width: 60rpx;
+
+				image {
+					max-width: 100%;
+					align-self: center;
 				}
 			}
 
@@ -276,39 +265,22 @@
 			padding: 0 22rpx;
 			padding-bottom: 138rpx;
 
-			.nav {
-				box-sizing: border-box;
-				width: 100%;
-				margin-bottom: 25rpx;
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: space-between;
+			.nav-item {
+				width: 25%;
 
-				.nav-item {
-					width: 25%;
-					margin-bottom: 45rpx;
-					text-align: center;
+				image {
+					max-width: 60rpx;
+				}
 
-					.nav-item-icon {
-						width: 100%;
-
-						image {
-							max-width: 60rpx;
-						}
-					}
-
-					text {
-						font-size: 26rpx;
-						color: #000000;
-					}
+				text {
+					font-size: 26rpx;
+					color: #000000;
 				}
 			}
 
 			.tig-bar {
-				box-sizing: border-box;
 				width: 706rpx;
 				height: 86rpx;
-				padding: 0 22rpx;
 				background-image: linear-gradient(90deg,
 					#ff3f5a 0%,
 					#ff8e66 66%),
@@ -317,10 +289,6 @@
 				background-blend-mode: normal,
 					normal;
 				box-shadow: inset 0rpx 38rpx 0rpx 0rpx rgba(255, 255, 255, 0.25);
-				border-radius: 43rpx;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
 
 				.tig-icon {
 					width: 44rpx;
@@ -333,18 +301,9 @@
 
 				.tig-txt {
 					width: 85%;
-					font-size: 26rpx;
-					color: #fff;
-					display: flex;
-					align-items: center;
-
-					.tig-txt-title {
-						margin-right: 40rpx;
-					}
 
 					.tig-txt-main {
 						width: 70%;
-						overflow: hidden;
 						text-overflow: ellipsis;
 						display: -webkit-box;
 						-webkit-line-clamp: 1;
@@ -359,33 +318,9 @@
 				}
 			}
 
-			.goods-bar {
-				width: 100%;
-				margin: 70rpx 0 28rpx 0;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-
-				.goods-bar-item {
-					width: 225rpx;
-					height: 349rpx;
-					background-color: #ffffff;
-					border-radius: 15rpx;
-
-					image {
-						display: block;
-						max-width: 100%;
-					}
-				}
-			}
-
-			.adversing {
-				width: 100%;
-				margin-bottom: 29rpx;
-
-				image {
-					width: 100%;
-				}
+			.goods-bar-item {
+				width: 225rpx;
+				height: 349rpx;
 			}
 
 			.goods-list {
@@ -446,90 +381,31 @@
 				}
 
 				.tab-change-obj {
-					width: 100%;
-					margin-top: 30rpx;
-					margin-bottom: 17rpx;
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: space-between;
-
 					.goods {
-						box-sizing: border-box;
 						width: 345rpx;
-						overflow: hidden;
-						background-color: #fff;
-						border-radius: 15rpx;
-
-						image {
-							display: block;
-							max-width: 100%;
-						}
 
 						.goods-title {
-							padding: 22rpx;
-							font-size: 24rpx;
 							line-height: 32rpx;
 							letter-spacing: -0.2rpx;
-							color: #000000;
-							text-align: justify;
-							overflow: hidden;
-							text-overflow: ellipsis;
-							display: -webkit-box;
-							-webkit-line-clamp: 2;
-							-webkit-box-orient: vertical;
-							word-break: break-all;
 						}
 
 						.exchange-btn {
-							float: left;
-							padding: 3rpx 4rpx;
-							margin: 0 0 22rpx 22rpx;
-							background-color: #ffffff;
-							border-radius: 5rpx;
 							border: solid 2rpx #e61010;
-							font-size: 18rpx;
 							line-height: 32rpx;
-							color: #e61010;
-							text-align: center;
 						}
 
-						.goods-msg {
-							box-sizing: border-box;
-							width: 100%;
-							padding: 0 22rpx 22rpx 22rpx;
-							display: flex;
-							align-items: center;
-							justify-content: space-between;
-
-							.left {
-								display: flex;
-								align-items: center;
-
-								image {
-									max-width: 25rpx;
-									margin-right: 10rpx;
-								}
-
-								text {
-									font-size: 20rpx;
-									line-height: 36rpx;
-									color: #ff8400;
-								}
+						.left {
+							image {
+								max-width: 25rpx;
 							}
 
-							.right {
-								font-size: 20rpx;
+							text {
 								line-height: 36rpx;
-								color: #aeaeae;
-
-								text {
-									font-size: 16rpx;
-									line-height: 36rpx;
-									color: #aeaeae;
-									position: relative;
-									top: -10rpx;
-								}
 							}
+						}
+
+						.right {
+							line-height: 36rpx;
 						}
 					}
 				}

@@ -5,25 +5,27 @@
 		</view>
 		<view class="main">
 			<view class="user-msg">
-				<view class="top">
-					<view class="name">
-						欧阳欧阳
+				<navigator url="/pages/address/index" hover-class="none">
+					<view class="top">
+						<view class="name">
+							欧阳欧阳
+						</view>
+						<view class="phone">
+							13531322355
+						</view>
+						<view class="state">
+							默认
+						</view>
 					</view>
-					<view class="phone">
-						13531322355
+					<view class="bottom">
+						<view class="address">
+							佛山市 顺德区 容桂街道 丰宁路9号 顺的网络 3楼
+						</view>
+						<view class="next-icon">
+							<image src="/static/images/confirm-order/next.png" mode="widthFix"></image>
+						</view>
 					</view>
-					<view class="state">
-						默认
-					</view>
-				</view>
-				<view class="bottom">
-					<view class="address">
-						佛山市 顺德区 容桂街道 丰宁路9号 顺的网络 3楼
-					</view>
-					<view class="next-icon">
-						<image src="/static/images/confirm-order/next.png" mode="widthFix"></image>
-					</view>
-				</view>
+				</navigator>
 			</view>
 			<!-- 商品 -->
 			<view class="order-wrapper">
@@ -88,19 +90,21 @@
 						免运费
 					</view>
 				</view>
-				<view class="activity fle">
-					<view class="activity-txt">
-						优惠活动
-					</view>
-					<view class="right">
-						<view class="activity-val">
-							满减200
+				<navigator :url="'/pages/card/index?id='+goodsId" hover-class="none">
+					<view class="activity fle">
+						<view class="activity-txt">
+							优惠活动
 						</view>
-						<view class="next-icon">
-							<image src="/static/images/confirm-order/next.png" mode="widthFix"></image>
+						<view class="right">
+							<view class="activity-val">
+								满减200
+							</view>
+							<view class="next-icon">
+								<image src="/static/images/confirm-order/next.png" mode="widthFix"></image>
+							</view>
 						</view>
 					</view>
-				</view>
+				</navigator>
 			</view>
 		</view>
 		<!-- 底部 -->
@@ -121,11 +125,32 @@
 	export default {
 		data() {
 			return {
-
+				goodsId:"",
+				goodsNum:"",
+				modelId:""
 			}
 		},
+		onLoad(options) {
+			console.log(options)
+			this.goodsId = options.goodsId;
+			this.goodsNum = options.goodsNum;
+			this.modelId = options.modelId;
+			this.getOrderData()
+		},
 		methods: {
-
+            getOrderData:function(){
+				const that = this;
+				this.$http('/commodity/getConfigOrder',{
+					id:that.goodsId,
+					carNum:that.goodsNum,
+					argid:that.modelId
+				},'post').then(function(res){
+					console.log(res);
+				})
+			},
+			openExchange:function(){
+				this.$http('/order/saveOrder',)
+			}
 		}
 	}
 </script>

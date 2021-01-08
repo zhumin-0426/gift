@@ -3,17 +3,13 @@
 		<view class="status_bar">
 			<!-- 这里是状态栏 -->
 		</view>
-		<view class="main">
-			<view class="date">
-				<view class="date-month">
-					{{defaultDate}}月
-				</view>
-				<view class="date-icon">
-					<gpp-date-picker @onCancel="onCancel" @onConfirm="onConfirm" :startDate="startDate" :endDate="endDate">
-					 <image src="/static/images/order/dete-icon.png" mode="widthFix"></image>
-					</gpp-date-picker>
-				</view>
+		<!-- 状态栏 -->
+		<view class="order-status">
+			<view class="order-status-item" :class="orderStatusCode==item.params?'status-item-active':''" v-for="(item,index) in orderStatusList" :key="index">
+				{{item.title}}
 			</view>
+		</view>
+		<view class="main">
 			<view class="order-wrapper">
 				<view class="order-item">
 					<view class="business">
@@ -21,7 +17,7 @@
 							<image src="/static/images/order/business-logo.png" mode="widthFix"></image>
 						</view>
 						<view class="coupon">
-							领劵
+							等待买家兑换
 						</view>
 					</view>
 					<view class="goods">
@@ -30,29 +26,10 @@
 						</view>
 						<view class="goods-msg">
 							<view class="title">绿恒源全棉印花四件套 HYX-020TJ绿罗伊</view>
-							<view class="promotion">
-								<view class="title">
-									促销
-								</view>
-								<view class="prompt">
-									每两套减200
-								</view>
-							</view>
-							<view class="integral-num">
-								<view class="integral">
-									<text>12000</text><text>积分</text>
-								</view>
-								<view class="num">
-									<view class="reduce" @click="reduceGoodsNum">
-										-
-									</view>
-									<input type="text" :value="goodsNum" />
-									<view class="add" @click="addGoosNum">
-										+
-									</view>
-								</view>
-							</view>
 						</view>
+					</view>
+					<view class="btn">
+						待兑换
 					</view>
 				</view>
 			</view>
@@ -63,7 +40,7 @@
 							<image src="/static/images/order/business-logo1.png" mode="widthFix"></image>
 						</view>
 						<view class="coupon">
-							领劵
+							等待买家兑换
 						</view>
 					</view>
 					<view class="goods">
@@ -72,28 +49,6 @@
 						</view>
 						<view class="goods-msg">
 							<view class="title">绿恒源全棉印花四件套 HYX-020TJ绿罗伊</view>
-							<view class="promotion">
-								<view class="title">
-									促销
-								</view>
-								<view class="prompt">
-									每两套减200
-								</view>
-							</view>
-							<view class="integral-num">
-								<view class="integral">
-									<text>12000</text><text>积分</text>
-								</view>
-								<view class="num">
-									<view class="reduce" @click="reduceGoodsNum">
-										-
-									</view>
-									<input type="text" :value="goodsNum" />
-									<view class="add" @click="addGoosNum">
-										+
-									</view>
-								</view>
-							</view>
 						</view>
 					</view>
 					<view class="goods">
@@ -102,28 +57,6 @@
 						</view>
 						<view class="goods-msg">
 							<view class="title">绿恒源全棉印花四件套 HYX-020TJ绿罗伊</view>
-							<view class="promotion">
-								<view class="title">
-									促销
-								</view>
-								<view class="prompt">
-									每两套减200
-								</view>
-							</view>
-							<view class="integral-num">
-								<view class="integral">
-									<text>12000</text><text>积分</text>
-								</view>
-								<view class="num">
-									<view class="reduce" @click="reduceGoodsNum">
-										-
-									</view>
-									<input type="text" :value="goodsNum" />
-									<view class="add" @click="addGoosNum">
-										+
-									</view>
-								</view>
-							</view>
 						</view>
 					</view>
 				</view>
@@ -134,51 +67,32 @@
 </template>
 
 <script>
-	import mpopup from 'components/xuan-popup/xuan-popup.vue';
-	import gppDatePicker from "@/components/gpp-datePicker/gpp-datePicker.vue";
+	
 	export default {
 		components: {
-			mpopup,
-			gppDatePicker
+			
 		},
 		data() {
 			return {
 				goodsNum: 1,
 				startDate: "2018-05-02",
 				endDate: "2022-09-20",
-				defaultDate:"9"
+				defaultDate:"9",
+				// 订单状态
+				orderStatusList:[
+					{title:"待兑换",params:"all"},
+					{title:"待发货",params:""},
+					{title:"待收货",params:""},
+					{title:"待评价",params:""},
+					{title:"退换修",params:""}
+				],
+				orderStatusCode:'all'
 			}
 		},
 		comments: {
 
 		},
 		methods: {
-			reduceGoodsNum: function() {
-				--this.goodsNum;
-				if (this.goodsNum < 1) {
-					this.$refs.mpopup.open({
-						type: 'warn',
-						content: '亲，数量最小为1哦！',
-						timeout: 3000,
-						isClick: false
-					});
-					this.goodsNum = 1
-				}
-			},
-			addGoosNum: function() {
-				++this.goodsNum
-			},
-			onCancel(e) {
-				console.log(e);
-			},
-			onConfirm(e) {
-				let selDate = e.dateValue.split('-')[1];
-				if(selDate.charAt(0)=='0'){
-					this.defaultDate = selDate.charAt(1);
-				}else{
-					this.defaultDate = selDate;
-				}
-			}
 		}
 	}
 </script>
@@ -193,39 +107,26 @@
 			height: var(--status-bar-height);
 			width: 100%;
 		}
-
+		.order-status{
+		    box-sizing: border-box;
+			width: 100%;
+			padding: 0 33rpx;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			.order-status-item{
+				font-size: 28rpx;
+				padding: 22rpx 0;
+			}
+			.status-item-active{
+			    border-bottom: solid 4rpx rgb(255, 80, 0);
+				color: rgb(255, 80, 0);
+			}
+		}
 		.main {
 			box-sizing: border-box;
 			width: 100%;
 			padding: 33rpx;
-
-			.date {
-				width: 100%;
-				margin-bottom: 32rpx;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-
-				.date-month {
-					padding: 5rpx 15rpx;
-					background-color: #ffffff;
-					border-radius: 30rpx;
-					border: solid 1rpx #e5e5e5;
-					font-size: 28rpx;
-					line-height: 40rpx;
-					color: #1a1a1a;
-				}
-
-				.date-icon {
-					width: 44rpx;
-					height: 38rpx;
-
-					image {
-						display: block;
-						max-width: 100%;
-					}
-				}
-			}
 
 			.order-wrapper {
 				width: 100%;
@@ -237,6 +138,7 @@
 					box-sizing: border-box;
 					width: 100%;
 					padding: 22rpx 0;
+					overflow: hidden;
 
 					.business {
 						box-sizing: border-box;
@@ -258,7 +160,7 @@
 						.coupon {
 							font-size: 24rpx;
 							line-height: 40rpx;
-							color: #1a1a1a;
+							color: rgb(255, 80, 0);
 						}
 					}
 
@@ -298,95 +200,16 @@
 								-webkit-box-orient: vertical;
 								word-break: break-all;
 							}
-
-							.promotion {
-								width: 100%;
-								margin-top: 15rpx;
-								margin-bottom: 15rpx;
-								display: flex;
-								align-items: center;
-
-								.title {
-									font-size: 20rpx;
-									color: #1a1a1a;
-									font-weight: bold;
-									margin-right: 17rpx;
-								}
-
-								.prompt {
-									background-color: #f1351b;
-									border-radius: 5rpx;
-									// padding: 3rpx;
-									font-size: 20rpx;
-									color: #ffffff;
-								}
-							}
-
-							.integral-num {
-								width: 100%;
-								display: flex;
-								align-items: center;
-								justify-content: space-between;
-
-								.integral {
-									text {
-										font-size: 28rpx;
-										line-height: 32rpx;
-										color: #f1351b;
-									}
-
-									text:first-child {
-										font-size: 28rpx;
-										line-height: 32rpx;
-										color: #f1351b;
-										font-weight: bold;
-										margin-right: 11rpx;
-									}
-								}
-
-								.num {
-									width: 132rpx;
-									display: flex;
-									align-items: center;
-
-									.reduce {
-										width: 44rpx;
-										height: 44rpx;
-										line-height: 44rpx;
-										background-color: #ffffff;
-										text-align: center;
-										font-size: 24rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-
-									input {
-										width: 44rpx;
-										height: 44rpx;
-										background-color: #f5f5f5;
-										border-radius: 5rpx;
-										text-align: center;
-										font-size: 20rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-
-									.add {
-										width: 44rpx;
-										height: 44rpx;
-										line-height: 44rpx;
-										background-color: #ffffff;
-										text-align: center;
-										font-size: 24rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-								}
-							}
 						}
+					}
+					.btn{
+						float: right;
+						border: solid 1rpx rgb(255, 80, 0);
+						font-size: 26rpx;
+						color: rgb(255, 80, 0);
+						padding: 5rpx 10rpx;
+						border-radius: 30rpx;
+						margin-right: 22rpx;
 					}
 				}
 

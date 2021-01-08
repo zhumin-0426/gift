@@ -11,12 +11,12 @@
 			</view>
 		</view>
 		<view class="content">
-			<form @submit="">
+			<form @submit="formSubmit">
 				<view class="get-integral display-flex">
 					<view class="fon-28">
-						接收积分账号
+						接收用户ID
 					</view>
-					<input type="text" value="" placeholder="请输入账号" placeholder-class="ipt-pls" />
+					<input type="text" value="" placeholder="请输入ID" placeholder-class="ipt-pls" />
 				</view>
 				<view class="phone display-flex">
 					<view class="fon-28">
@@ -45,7 +45,9 @@
 			}
 		},
 		methods: {
-
+			formSubmit: function() {
+             
+			}
 		}
 	}
 </script>

@@ -3,7 +3,7 @@
 		<view class="status_bar">
 			<!-- 这里是状态栏 -->
 		</view>
-		<view class="herder">
+	<!-- 	<view class="herder">
 			<view class="user-pic">
 				<image src="../../static/images/index/user-pic.png" mode="widthFix"></image>
 			</view>
@@ -15,19 +15,19 @@
 					<image src="../../static/images/collec/search-icon.png" mode="widthFix"></image>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		<view class="content">
-			<view class="collec-item">
+			<view class="collec-item" v-for="(item,index) in collecList" :key="index">
 				<view class="business">
 					<view class="business-logo">
-						<image src="/static/images/collec/business-logo.png" mode="widthFix"></image>
+						<image :src="imageUrl+item.commodityVO.logo" mode="widthFix"></image>
 					</view>
-					<view class="focusOn">
-						关注
+					<view class="calcel-collec">
+						取消收藏
 					</view>
 				</view>
 				<view class="adversing">
-					<image src="/static/images/collec/adversing.png" mode="widthFix"></image>
+					<image :src="imageUrl+item.commodityVO.imglist[0].imgUrl" mode="widthFix"></image>
 				</view>
 				<view class="goods-data">
 					<view class="left">
@@ -35,15 +35,22 @@
 							<view class="goods-get-icon">
 								<image src="/static/images/collec/goods-get-icon.png" mode="widthFix"></image>
 							</view>
-							<text>246人已领</text>
+							<text>{{item.commodityVO.salnum}}人已领</text>
 						</view>
 					</view>
 					<view class="right">
-						<view class="like">
+						<view class="like-active" @click="giveLike(item.id)" v-if="item.isgood>0">
+							<view class="like-icon">
+								<image src="/static/images/collec/like-icon-active.png" mode="widthFix"></image>
+							</view>
+							<text>{{item.commodityVO.goodcount}}</text>
+							<text>点赞</text>
+						</view>
+						<view class="like" @click="giveLike(item.id)" v-else>
 							<view class="like-icon">
 								<image src="/static/images/collec/like-icon.png" mode="widthFix"></image>
 							</view>
-							<text>3066</text>
+							<text>{{item.commodityVO.goodcount}}</text>
 							<text>点赞</text>
 						</view>
 						<view class="share" @click="shareOpen">
@@ -100,10 +107,17 @@
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	export default {
 		data() {
-			return {}
+			return {
+				// 图片路径
+				imageUrl:"",
+				collecList:[]
+			}
 		},
-		created() {
-
+		onLoad() {
+			this.$nextTick(function(){
+				this.imageUrl = this.$url.imageUrl;
+			})
+			this.myCollecData();
 		},
 		methods: {
 			shareOpen() {
@@ -111,6 +125,24 @@
 			},
 			shareClose() {
 				this.$refs.popup.close()
+			},
+			// 我的收藏
+			myCollecData: function() {
+				const that = this;
+				this.$http('/users/getUserCollect', {}, 'post').then(function(res) {
+					console.log(res);
+					if(res.data.status=='success'){
+						that.collecList = res.data.userCollectByList
+					}
+				})
+			},
+			// 点赞
+			giveLike:function(id){
+				this.$http('/users/setCollectGood',{
+					collectCommodityId:id
+				},'post').then(function(res){
+					console.log(res)
+				})
 			}
 		}
 	}
@@ -196,10 +228,10 @@
 						}
 					}
 
-					.focusOn {
-						width: 88rpx;
+					.calcel-collec {
+						padding: 5rpx 10rpx;
 						height: 33rpx;
-						background-color: #f1351b;
+						background-color: #aeaeae;
 						border-radius: 5rpx;
 						font-size: 20rpx;
 						line-height: 32rpx;
@@ -266,7 +298,7 @@
 
 							.like-icon {
 								width: 34rpx;
-								height: 29rpx;
+								// height: 29rpx;
 								margin-right: 12rpx;
 
 								image {
@@ -278,6 +310,27 @@
 							text {
 								font-size: 20rpx;
 								color: #aeaeae;
+							}
+						}
+						.like-active {
+							display: flex;
+							align-items: center;
+							margin-right: 34rpx;
+						
+							.like-icon {
+								width: 34rpx;
+								// height: 29rpx;
+								margin-right: 12rpx;
+						
+								image {
+									display: block;
+									width: 100%;
+								}
+							}
+						
+							text {
+								font-size: 20rpx;
+								color: #FF0000;
 							}
 						}
 
