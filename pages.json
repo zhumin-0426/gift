@@ -1,127 +1,177 @@
 {
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "首页",
-			"navigationStyle": "custom"
+	"pages": [
+		// {
+		// 	"path": "pages/login/login",
+		// 	"style": {
+		// 		"navigationBarTitleText": "登录页",
+		// 		"navigationStyle": "custom"
+		// 	}
+		// },
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/classify/index",
+			"style": {
+				"navigationBarTitleText": "全部分类",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "我的订单"
+			}
+		}, {
+			"path": "pages/collec/index",
+			"style": {
+				"navigationBarTitleText": "我的收藏"
+			}
+		}, {
+			"path": "pages/sendIntegral/index",
+			"style": {
+				"navigationBarTitleText": "赠送积分"
+			}
+		}, {
+			"path": "pages/goodsDetail/index",
+			"style": {
+				"navigationBarTitleText": "商品详情",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/car/index",
+			"style": {
+				"navigationBarTitleText": "购物车",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/found/index",
+			"style": {
+				"navigationBarTitleText": "我的发现",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/myPointTo/index",
+			"style": {
+				"navigationBarTitleText": "我的关注"
+			}
+		}, {
+			"path": "pages/regiter/index",
+			"style": {
+				"navigationBarTitleText": "会员注册"
+			}
+		}, {
+			"path": "pages/integralTopUpHis/index",
+			"style": {
+				"navigationBarTitleText": "积分充值记录"
+			}
+		}, {
+			"path": "pages/integralCashHistory/index",
+			"style": {
+				"navigationBarTitleText": "积分收付记录"
+			}
+		}, {
+			"path": "pages/confirmOrder/index",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
+		}, {
+			"path": "pages/card/index",
+			"style": {
+				"navigationBarTitleText": "优惠卷"
+			}
+		}, {
+			"path": "pages/address/index",
+			"style": {
+				"navigationBarTitleText": "地址管理"
+			}
+		}, {
+			"path": "pages/address/editor",
+			"style": {
+				"navigationBarTitleText": "地址编辑"
+			}
+		}, {
+			"path": "pages/address/add",
+			"style": {
+				"navigationBarTitleText": "添加地址"
+			}
+		}, {
+			"path": "pages/footprint/index",
+			"style": {
+				"navigationBarTitleText": "我的足迹"
+			}
+		}, {
+			"path": "pages/integral/index",
+			"style": {
+				"navigationBarTitleText": "面对面收付积分"
+			}
+		}, {
+			"path": "pages/demo/demo",
+			"style": {}
+		}, {
+			"path": "pages/topUp/index",
+			"style": {
+				"navigationBarTitleText": "账户"
+			}
+		}, {
+			"path": "pages/topUp/pay/pay",
+			"style": {
+				"navigationBarTitleText": "在线充值"
+			}
+		}, {
+			"path": "pages/notice/index",
+			"style": {
+				"navigationBarTitleText": "系统信息列表",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/notice/detail/index",
+			"style": {
+				"navigationBarTitleText": "系统消息详情",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/order/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/search/index",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/goodsList/index",
+			"style": {
+				"navigationBarTitleText": "商品列表",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/evaluate/index",
+			"style": {
+				"navigationBarTitleText": "评价",
+				"enablePullDownRefresh": false
+			}
+
 		}
-	}, {
-		"path": "pages/classify/index",
-		"style": {
-			"navigationBarTitleText": "全部分类",
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/user/index",
-		"style": {
-			"navigationBarTitleText": "个人中心",
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/order/index",
-		"style": {
-			"navigationBarTitleText": "我的订单"
-		}
-	}, {
-		"path": "pages/collec/index",
-		"style": {
-			"navigationBarTitleText": "我的收藏"
-		}
-	}, {
-		"path": "pages/sendIntegral/index",
-		"style": {
-			"navigationBarTitleText": "赠送积分"
-		}
-	}, {
-		"path": "pages/goodsDetail/index",
-		"style": {
-			"navigationBarTitleText": "商品详情",
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/car/index",
-		"style": {
-			"navigationBarTitleText": "购物车",
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/found/index",
-		"style": {
-			"navigationBarTitleText": "我的发现",
-			"navigationStyle": "custom"
-		}
-	}, {
-		"path": "pages/myPointTo/index",
-		"style": {
-			"navigationBarTitleText": "我的关注"
-		}
-	}, {
-		"path": "pages/regiter/index",
-		"style": {
-			"navigationBarTitleText": "会员注册"
-		}
-	}, {
-		"path": "pages/integralTopUpHis/index",
-		"style": {
-			"navigationBarTitleText": "积分充值记录"
-		}
-	}, {
-		"path": "pages/integralCashHistory/index",
-		"style": {
-			"navigationBarTitleText": "积分收付记录"
-		}
-	}, {
-		"path": "pages/confirmOrder/index",
-		"style": {
-			"navigationBarTitleText": "确认订单"
-		}
-	}, {
-		"path": "pages/card/index",
-		"style": {
-			"navigationBarTitleText": "优惠卷"
-		}
-	}, {
-		"path": "pages/address/index",
-		"style": {
-			"navigationBarTitleText": "地址管理"
-		}
-	}, {
-		"path": "pages/address/editor",
-		"style": {
-			"navigationBarTitleText": "地址编辑"
-		}
-	}, {
-		"path": "pages/address/add",
-		"style": {
-			"navigationBarTitleText": "添加地址"
-		}
-	}, {
-		"path": "pages/footprint/index",
-		"style": {
-			"navigationBarTitleText": "我的足迹"
-		}
-	}, {
-		"path": "pages/integral/index",
-		"style": {
-			"navigationBarTitleText": "面对面收付积分"
-		}
-	}, {
-		"path": "pages/demo/demo",
-		"style": {}
-	}, {
-		"path": "pages/topUp/index",
-		"style": {
-			"navigationBarTitleText": "账户"
-		}
-	}, {
-		"path": "pages/topUp/pay/pay",
-		"style": {
-			"navigationBarTitleText": "在线充值"
-		}
-	}],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "积分商城",
+		"navigationBarTitleText": "礼品汇",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FFFFFF"
 	}

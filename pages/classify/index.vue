@@ -3,138 +3,91 @@
 		<view class="status_bar">
 			<!-- 这里是状态栏 -->
 		</view>
-		<view class="herder">
-			<view class="search">
-				<view class="integral-barter">
-					<view class="search-icon">
-						<image src="/static/images/all-classify/search-icon.png" mode="widthFix"></image>
+		<view class="herder box-sz w100 pd-t-22 pd-r-22 pd-b-22 pd-l-22 bg-no-r">
+			<view class="search dis-flex al-items-center jf-bw">
+				<view class="cover" @click="jumpSearch"></view>
+				<view class="integral-barter box-sz pd-r-22 pd-l-22 dis-flex al-items-center jf-bw bg-fff bd-r-30">
+					<view class="search-icon mg-r-10">
+						<image class="w100" src="/static/images/all-classify/search-icon.png" mode="widthFix"></image>
 					</view>
-					<input type="text" value="" placeholder="积分换物" placeholder-class="search-pls" />
-					<view class="scan-icon">
-						<image src="../../static/images/all-classify/scan.png" mode="widthFix"></image>
-					</view>
+					<input class="fon-24 col-333" type="text" value="" placeholder="积分换物" placeholder-class="search-pls" />
+					<!-- <view class="scan-icon">
+						<image class="w100" src="../../static/images/all-classify/scan.png" mode="widthFix"></image>
+					</view> -->
 				</view>
-				<view class="integral-line">
-					<view class="integral-time integral-start-time">
-						<input type="text" value="" placeholder="积分起点" placeholder-class="integral-line-pls" />
+				<view class="integral-line dis-flex al-items-center fon-12 col-fff">
+					<view class="integral-time integral-start-time box-sz bg-fff bd-r-30">
+						<input class="ds-b w100 fon-24 col-333 txt-center" type="text" value="" placeholder="积分起点" placeholder-class="integral-line-pls" />
 					</view>
 					-
-					<view class="integral-time integral-end-time">
-						<input type="text" value="" placeholder="积分止点" placeholder-class="integral-line-pls" />
+					<view class="integral-time integral-end-time box-sz bg-fff bd-r-30">
+						<input class="ds-b w100 fon-24 col-333 txt-center" type="text" value="" placeholder="积分止点" placeholder-class="integral-line-pls" />
 					</view>
-					<view class="btn">搜索</view>
+					<view class="btn fon-28">搜索</view>
 				</view>
 			</view>
 		</view>
-		<view class="content">
+		<view class="content pos-r">
 			<!-- 侧边栏 -->
-			<view class="side-bar">
-				<view class="side-bar-title">
-					<image src="../../static/images/all-classify/title-icon.png" mode="widthFix"></image>
-					<text>推荐分类</text>
+			<view class="side-bar pos-f bt-0 lf-0 fl-hd">
+				<view class="side-bar-title dis-flex bg-fff pos-a tp-0 lf-0">
+					<image class="mg-r-14" src="../../static/images/all-classify/title-icon.png" mode="widthFix"></image>
+					<text class="fon-26 col-f13">推荐分类</text>
 				</view>
-				<view class="side-bar-box">
-					<view class="side-bar-item">家居家纺</view>
-					<view class="side-bar-item">运动户外</view>
-					<view class="side-bar-item">汽车用品</view>
-					<view class="side-bar-item">休闲零食</view>
-					<view class="side-bar-item">家居厨具</view>
-					<view class="side-bar-item">美妆洗护</view>
-					<view class="side-bar-item">酒水饮品</view>
-					<view class="side-bar-item">茶具茶叶</view>
-					<view class="side-bar-item">箱包皮具</view>
-					<view class="side-bar-item">服饰鞋帽</view>
-					<view class="side-bar-item">电脑数码</view>
-					<view class="side-bar-item">家电手机</view>
+				<view class="side-bar-box pos-a tp-0 lf-0 bt-0">
+					<block v-for="(item,index) in sideBarList">
+						<view :class="leftCurrentVal==index?'side-bar-item-active':'side-bar-item'" @click="sideBarChange" :data-id="index">{{item.urlName}}</view>
+					</block>
 				</view>
 			</view>
 			<!-- 分类商品 -->
-			<view class="classify-goods">
+			<view class="classify-goods box-sz pd-r-22 pos-a tp-0 rt-0">
 				<!-- 轮播 -->
-				<view class="adversing">
-					<swiper :autoplay="true" :interval="3000" :duration="1000">
-						<swiper-item>
-							<view class="swiper-item">
-								<image src="../../static/images/all-classify/adversing.png" mode="widthFix"></image>
-							</view>
-						</swiper-item>
+				<view class="adversing w100 fl-hd bd-r-14 fl-hd">
+					<swiper class="swiper" :autoplay="true" :interval="3000" :duration="1000">
+						<block v-if="sideBarList.length>0">
+							<block v-for="(item,index) in sideBarList[leftCurrentVal].commodityKindlist[rightCurrentVal].imglist" :key="index">
+								<swiper-item>
+									<image :src="imageUrl+item" mode="widthFix"></image>
+								</swiper-item>
+							</block>
+						</block>
 					</swiper>
 				</view>
 				<!-- tab 商品分类 右 -->
-				<view class="tab">
-					<view @click="changeTabObj(index)" :class="index==rightTabObj?'tab-item-active':'tab-item'" v-for="(item,index) in rightTabClassify"
-					 :key="index">
-						<view class="tab-item-txt">{{item.txt}}</view>
-						<view class="tab-item-line"></view>
-					</view>
+				<view class="tab w100 dis-flex ">
+					<block v-if="sideBarList.length>0">
+						<block v-for="(item,index) in sideBarList[leftCurrentVal].commodityKindlist">
+							<view :class="rightCurrentVal==index?'tab-item-active': 'tab-item'">
+								<view class="cover" @click="changeTabObj" :data-id="index"></view>
+								<view class="tab-item-txt fon-26 col-1a1">{{item.kindName}}</view>
+								<view class="tab-item-line"></view>
+							</view>
+						</block>
+					</block>
 				</view>
-				<view class="tab-obj">
-					<view class="goods-box">
-						<view class="goods">
-							<view class="goods-pic">
-								<image src="../../static/images/all-classify/goods1.png" mode="widthFix"></image>
-							</view>
-							<view class="goods-msg">
-								<view class="title">同林鸟 静音铝框包角差旅出行拉杆箱 玫瑰金 20寸</view>
-								<view class="num">限量500份</view>
-								<view class="integral">
-									<view class="left"><text>6000</text><text>积分</text></view>
-									<view class="right">246人已领</view>
+				<view class="tab-obj pos-f bt-0 rt-0">
+					<view class="goods-box w100 pos-a tp-0 bt-0">
+						<block v-if="sideBarList.length>0">
+							<block v-for="(item,index) in sideBarList[leftCurrentVal].commodityKindlist[rightCurrentVal].commoditylist" :key="index">
+								<view class="goods w100 dis-flex jf-bw">
+									<view class="cover" @click="jumpGoodsDel" :data-id="item.id"></view>
+									<view class="goods-pic">
+										<image :src="imageUrl+item.imgUrl" mode="widthFix"></image>
+									</view>
+									<view class="goods-msg">
+										<view class="title fon-28 txt-justify txt-clamp-2">{{item.commodityName}} {{item.commodityDescribe}}</view>
+										<view class="num ds-il-b pd-t-6 pd-b-6 pd-l-10 pd-r-10 fon-24 col-f13 txt-center bg-fff bd-r-10">限量
+											{{item.maxNumber}} 份</view>
+										<view class="integral w100 dis-flex al-items-center jf-bw">
+											<view class="left fon-34 fon-w-b col-f13 dis-flex al-items-center"><text class="ds-b">{{item.defaultScore}}</text><text
+												 class="ds-b fon-24 mg-l-12">积分</text></view>
+											<view class="right fon-24 col-aea">{{item.salnum}}人已领</view>
+										</view>
+									</view>
 								</view>
-							</view>
-						</view>
-						<view class="goods">
-							<view class="goods-pic">
-								<image src="../../static/images/all-classify/goods2.png" mode="widthFix"></image>
-							</view>
-							<view class="goods-msg">
-								<view class="title">同林鸟 静音铝框包角差旅出行拉杆箱 玫瑰金 20寸</view>
-								<view class="num">限量500份</view>
-								<view class="integral">
-									<view class="left"><text>6000</text><text>积分</text></view>
-									<view class="right">246人已领</view>
-								</view>
-							</view>
-						</view>
-						<view class="goods">
-							<view class="goods-pic">
-								<image src="../../static/images/all-classify/goods3.png" mode="widthFix"></image>
-							</view>
-							<view class="goods-msg">
-								<view class="title">同林鸟 静音铝框包角差旅出行拉杆箱 玫瑰金 20寸</view>
-								<view class="num">限量500份</view>
-								<view class="integral">
-									<view class="left"><text>6000</text><text>积分</text></view>
-									<view class="right">246人已领</view>
-								</view>
-							</view>
-						</view>
-						<view class="goods">
-							<view class="goods-pic">
-								<image src="../../static/images/all-classify/goods4.png" mode="widthFix"></image>
-							</view>
-							<view class="goods-msg">
-								<view class="title">同林鸟 静音铝框包角差旅出行拉杆箱 玫瑰金 20寸</view>
-								<view class="num">限量500份</view>
-								<view class="integral">
-									<view class="left"><text>6000</text><text>积分</text></view>
-									<view class="right">246人已领</view>
-								</view>
-							</view>
-						</view>
-						<view class="goods">
-							<view class="goods-pic">
-								<image src="../../static/images/all-classify/goods2.png" mode="widthFix"></image>
-							</view>
-							<view class="goods-msg">
-								<view class="title">同林鸟 静音铝框包角差旅出行拉杆箱 玫瑰金 20寸</view>
-								<view class="num">限量500份</view>
-								<view class="integral">
-									<view class="left"><text>6000</text><text>积分</text></view>
-									<view class="right">246人已领</view>
-								</view>
-							</view>
-						</view>
+							</block>
+						</block>
 					</view>
 				</view>
 			</view>
@@ -151,26 +104,11 @@
 		},
 		data() {
 			return {
-				rightTabClassify: [{
-						txt: "拉杆箱"
-					},
-					{
-						txt: "背包"
-					},
-					{
-						txt: "手提包"
-					},
-					{
-						txt: "皮带"
-					},
-					{
-						txt: "领带"
-					},
-					{
-						txt: "领带"
-					}
-				],
-				rightTabObj: 0,
+				// 图片路径
+				imageUrl: "",
+				sideBarList: [],
+				leftCurrentVal: 0,
+				rightCurrentVal: 0,
 				// 底部导航
 				tabBarActive: {
 					state: 2,
@@ -180,16 +118,51 @@
 				}
 			}
 		},
+		onLoad() {
+			this.initClassifyData();
+			this.$nextTick(function() {
+				this.imageUrl = this.$url.imageUrl;
+			})
+		},
 		methods: {
-			changeTabObj: function(index) {
-				console.log(index)
-				this.rightTabObj = index
+			initClassifyData: function() {
+				const that = this;
+				that.$http('/commodity/getAllCommodityKind', {}, 'post').then(function(res) {
+					console.log("商品分类数据初始化", res);
+					that.sideBarList = res.data.allKind;
+					console.log(that.sideBarList[0].commodityKindlist)
+				})
+			},
+			// 左边侧边栏
+			sideBarChange: function(e) {
+				console.log("e", e)
+				let id = e.target.dataset.id;
+				this.leftCurrentVal = id;
+			},
+			// 属性切换
+			changeTabObj: function(e) {
+				console.log('e', e)
+				let id = e.target.dataset.id;
+				this.rightCurrentVal = id;
+			},
+			// 搜索跳转
+			jumpSearch: function() {
+				uni.navigateTo({
+					url: '/pages/search/index'
+				})
+			},
+			// 商品详情跳转
+			jumpGoodsDel: function(e) {
+				let id = e.target.dataset.id;
+				uni.navigateTo({
+					url: '/pages/goodsDetail/index?id=' + id
+				})
 			}
 		}
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 	.container {
 		.status_bar {
 			height: var(--status-bar-height);
@@ -197,174 +170,118 @@
 		}
 
 		.herder {
-			box-sizing: border-box;
-			width: 100%;
 			height: 308rpx;
-			padding: 22rpx;
 			background-image: url(../../static/images/all-classify/classify-container-pic.png);
-			background-repeat: no-repeat;
 			background-size: 100% 308rpx;
 
+
 			.search {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
+				position: relative;
+
+				.cover {
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					z-index: 999;
+				}
 
 				.integral-barter {
-					box-sizing: border-box;
 					width: 300rpx;
 					height: 60rpx;
-					padding: 0 22rpx;
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-					background-color: #fff;
-					border-radius: 30rpx;
 					border: solid 1rpx #f2f2f2;
 
 					.search-icon {
 						width: 35rpx;
-						margin-right: 10rpx;
-
-						image {
-							display: block;
-							width: 100%;
-						}
-					}
-
-					input {
-						font-size: 24rpx;
-						color: #333;
-					}
-
-					.search-pls {
-						font-size: 24rpx;
-						color: #a3a3a3;
 					}
 
 					.scan-icon {
 						width: 35rpx;
-
-						image {
-							display: block;
-							width: 100%;
-						}
-
-					}
-				}
-
-				.integral-line {
-					display: flex;
-					align-items: center;
-					font-size: 12rpx;
-					color: #fff;
-
-					.integral-time {
-						box-sizing: border-box;
-						width: 130rpx;
-						height: 56rpx;
-						margin: 0 25rpx 0 10rpx;
-						background-color: #fff;
-						border-radius: 30rpx;
-
-						input {
-							display: block;
-							width: 100%;
-							height: inherit;
-							line-height: 60rpx;
-							font-size: 24rpx;
-							color: #333;
-							text-align: center;
-						}
-
-						.integral-line-pls {
-							font-size: 24rpx;
-							color: #a3a3a3;
-						}
 					}
 				}
 			}
+
+			.integral-time {
+				width: 130rpx;
+				height: 56rpx;
+				margin: 0 25rpx 0 10rpx;
+
+				input {
+					height: inherit;
+					line-height: 60rpx;
+				}
+
+				.integral-line-pls {
+					font-size: 24rpx;
+					color: #a3a3a3;
+				}
+			}
+
 		}
 
 		.content {
-			position: relative;
 			top: -135rpx;
 
 			.side-bar {
 				width: 213rpx;
-				position: fixed;
 				top: 250rpx;
-				bottom: 0;
-				left: 0;
 				overflow: hidden;
 
 				.side-bar-title {
-					margin-bottom: 32rpx;
-					display: flex;
-					padding: 0 0 0 32rpx;
-					background-color: #fff;
-					position: absolute;
-					top: 0;
-					left: 0;
+					padding: 0 0 32rpx 32rpx;
 					z-index: 999;
 
 					image {
-						display: block;
 						width: 34rpx;
-						margin-right: 15rpx;
-					}
-
-					text {
-						font-size: 26rpx;
-						color: #f1351b;
 					}
 				}
 
 				.side-bar-box {
 					padding-top: 64rpx;
 					z-index: 90;
-					position: absolute;
-					top: 0;
-					bottom: 0;
-					left: 0;
 					overflow-y: auto;
 					padding-bottom: 108rpx;
 					-webkit-overflow-scrolling: touch;
 
 
 					.side-bar-item {
-						box-sizing: border-box;
 						width: inherit;
 						padding: 32rpx 0 32rpx 32rpx;
-						font-size: 25rpx;
-						color: #000000;
+						font-size: 26rpx;
+						box-sizing: border-box;
+					}
+
+					.side-bar-item-active {
+						width: inherit;
+						padding: 32rpx 0 32rpx 32rpx;
+						font-size: 26rpx;
+						color: #f1351b;
+						box-sizing: border-box;
+					}
+
+					&::-webkit-scrollbar {
+						display: none
 					}
 				}
 			}
 
 			.classify-goods {
-				box-sizing: border-box;
 				width: 537rpx;
-				padding-right: 22rpx;
-				position: absolute;
-				top: 0;
-				right: 0;
 
 				.adversing {
-					width: 100%;
 					height: 170rpx;
-					overflow: hidden;
 
-					image {
-						display: block;
+					.swiper {
 						width: 100%;
+						height: 100%;
+
+						image {
+							width: 100%;
+							height: 100% !important;
+						}
 					}
 				}
 
 				.tab {
-					width: 100%;
-					display: flex;
-					justify-content: space-between;
 					white-space: nowrap;
 					overflow-y: hidden;
 					overflow-x: scroll;
@@ -375,15 +292,28 @@
 
 					.tab-item {
 						padding: 36rpx 44rpx 62rpx 0;
+						position: relative;
 
-						.tab-item-txt {
-							font-size: 24rpx;
-							color: #1a1a1a;
+						.cover {
+							position: absolute;
+							top: 0;
+							left: 0;
+							bottom: 0;
+							right: 0;
 						}
 					}
 
 					.tab-item-active {
 						padding: 36rpx 44rpx 62rpx 0;
+						position: relative;
+
+						.cover {
+							position: absolute;
+							top: 0;
+							left: 0;
+							bottom: 0;
+							right: 0;
+						}
 
 						.tab-item-txt {
 							font-size: 24rpx;
@@ -403,27 +333,27 @@
 
 				.tab-obj {
 					width: 515rpx;
-					position: fixed;
 					top: 480rpx;
-					bottom: 0;
-					right: 0;
 
 					.goods-box {
-						width: 100%;
 						z-index: 90;
-						position: absolute;
-						top: 0;
-						bottom: 0;
 						right: 22rpx;
 						overflow-y: auto;
 						padding-bottom: 108rpx;
 						-webkit-overflow-scrolling: touch;
 
 						.goods {
-							width: 100%;
 							margin-bottom: 43rpx;
-							display: flex;
-							justify-content: space-between;
+							position: relative;
+
+							.cover {
+								position: absolute;
+								top: 0;
+								left: 0;
+								right: 0;
+								bottom: 0;
+								z-index: 999;
+							}
 
 							.goods-pic {
 								width: 160rpx;
@@ -431,9 +361,8 @@
 								border-radius: 15rpx;
 
 								image {
-									display: block;
 									width: 100%;
-									height: 100%;
+									height: 100% !important;
 								}
 							}
 
@@ -441,29 +370,13 @@
 								width: 292rpx;
 
 								.title {
-									font-size: 22rpx;
 									line-height: 32rpx;
-									color: #000000;
-									text-align: justify;
-									overflow: hidden;
-									text-overflow: ellipsis;
-									display: -webkit-box;
-									-webkit-line-clamp: 2;
-									-webkit-box-orient: vertical;
-									word-break: break-all;
 								}
 
 								.num {
-									display: inline-block;
-									padding: 7rpx 11rpx;
 									margin: 10rpx 0 22rpx 0;
-									background-color: #ffffff;
-									border-radius: 10rpx;
 									border: solid 1rpx #f1341b;
-									font-size: 18rpx;
 									line-height: 32rpx;
-									color: #f1351b;
-									text-align: center;
 								}
 
 								.integral {
@@ -473,28 +386,15 @@
 									justify-content: space-between;
 
 									.left {
-										font-size: 35rpx;
-										font-weight: bold;
 										line-height: 32rpx;
-										color: #f1351b;
-										display: flex;
-										align-items: center;
-
-										text {
-											display: block;
-										}
 
 										text:last-child {
-											margin-left: 10rpx;
-											font-size: 12rpx;
 											font-weight: normal;
 										}
 									}
 
 									.right {
-										font-size: 16rpx;
 										line-height: 32rpx;
-										color: #aeaeae;
 									}
 								}
 							}

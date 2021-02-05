@@ -9,26 +9,28 @@
 					<image src="/static/images/index/logo.png" mode="widthFix"></image>
 				</view>
 				<view class="search pd-r-22 pd-l-22 bg-fff dis-flex al-items-center jf-bw bd-r-60">
+					<view class="cover" @click="jumpSearch"></view>
 					<view class="search-icon dis-flex">
 						<image class="search-icon" src="/static/images/index/search-icon.png" mode="widthFix"></image>
 					</view>
 					<input class="search-ipt" type="text" value="" placeholder="搜索" placeholder-class="search-pls" />
-					<view class="scan dis-flex">
-						<image class="scan w100" src="/static/images/index/scan.png" mode="widthFix"></image>
+				</view>
+				<block v-if="userpic.userpic">
+					<view class="user-pic dis-flex">
+						<image :src="userpic.userpic" mode="widthFix"></image>
 					</view>
-				</view>
-				<view class="user-pic dis-flex">
-					<image src="../../static/images/index/user-pic.png" mode="widthFix"></image>
-				</view>
+				</block>
 			</view>
 			<!-- 轮播 -->
 			<view class="swipe-warpper">
 				<swiper class="swiper" indicator-dots="true" circular="true" autoplay="true" interval="2000" duration="500"
 				 indicator-color="#f7f7f7" indicator-active-color="#ff0000">
-					<swiper-item v-for="(bannerItem,bannerIndex) in bannerList" :key="bannerIndex">
-						<view class="swiper-item">
-							<image style="width: 100%;" :src="imageUrl+bannerItem.bannerPic" mode="widthFix"></image>
-						</view>
+					<swiper-item>
+						<block v-for="(bannerItem,bannerIndex) in bannerList" :key="bannerIndex">
+							<view class="swiper-item" @click="jumpGoodsDel" :data-id="bannerItem.bannerBelongCommodityId">
+								<image style="width: 100%;" :src="imageUrl+bannerItem.bannerPic" mode="widthFix"></image>
+							</view>
+						</block>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -37,7 +39,7 @@
 			<!-- 导航栏 -->
 			<view class="nav dis-flex mg-b-24 flx-w w100 jf-bw">
 				<view class="nav-item mg-b-44 txt-center" v-for="(navItem,navIndex) in navList" :key="navIndex">
-					<navigator hover-class="none">
+					<navigator :url="'/pages/goodsList/index?id='+navItem.id" hover-class="none">
 						<view class="nav-item-icon w100">
 							<image :src="imageUrl+navItem.imgUrl" mode="widthFix"></image>
 						</view>
@@ -47,41 +49,29 @@
 			</view>
 			<!-- 信息栏 -->
 			<view class="tig-bar box-sz pd-l-22 pd-r-22 bd-r-42 dis-flex al-items-center jf-bw">
-				<view class="tig-icon">
-					<image src="../../static/images/index/tig-icon.png" mode="widthFix"></image>
-				</view>
-				<view class="tig-txt fon-26 col-fff dis-flex al-items-center">
-					<view class="tig-txt-title mg-r-40">
-						最新消息
-					</view>
-					<view class="tig-txt-main fl-hd">
-						"NIKE ADIDAS 进驻顺的积分..."
-					</view>
-				</view>
-				<view class="tig-more">
-					更多
-				</view>
+				<uni-notice-bar :speed="50" style="width: 100%;height: 100%;padding: 0;margin: 0;" background-color="transparent" color="#fff" moreColor="#ff415a" scrollable="true" showIcon="true" :showGetMore="true" moreText="更多" single="true" :text="systemMsg.msgTitle" @getmore="getmore"></uni-notice-bar>
 			</view>
-			<!-- 商品栏 -->
+			<!-- 热门推荐 -->
 			<view class="goods-bar w100 dis-flex al-items-center jf-bw mg-t-70 mg-b-28">
-				<view class="goods-bar-item bg-fff bd-r-14">
-					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item1.png" mode="widthFix"></image>
-				</view>
-				<view class="goods-bar-item bg-fff bd-r-14">
-					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item2.png" mode="widthFix"></image>
-				</view>
-				<view class="goods-bar-item bg-fff bd-r-14">
-					<image class="w100 ds-b" src="../../static/images/index/goods-bar-item3.png" mode="widthFix"></image>
+				<view class="goods-bar-item bg-fff bd-r-14" v-for="(recommendGoodsItem,recommendGoodsIndex) in recommendGoods" :key="recommendGoodsIndex"
+				 @click="jumpGoodsDel($event)" :data-id="recommendGoodsItem.id">
+					<image class="w100 ds-b" :src="imageUrl+recommendGoodsItem.recommendPic" mode="widthFix"></image>
 				</view>
 			</view>
 			<!-- 广告 -->
 			<view class="adversing w100 mg-b-28">
-				<image class="w100" src="/static/images/index/adversing.png" mode="widthFix"></image>
+				<swiper class="swiper" :autoplay="autoplay" :interval="interval" :duration="duration">
+					<block v-for="(item,index) in advList" :key="index">
+						<swiper-item @click="jumpGoodsDel" :data-id="item.belongCommodityId">
+							<image class="w100" :src="imageUrl+item.salesPic" mode="widthFix"></image>
+						</swiper-item>
+					</block>
+				</swiper>
 			</view>
 			<!-- 商品列表 -->
 			<view class="goods-list">
 				<view class="tab w100 dis-flex flx-w jf-bw">
-					<view @click="changeTabObj(item.id,index)" :class="item.id==currentTabObj?'tab-item-active':'tab-item'" v-for="(item,index) in goodsListTab"
+					<view @click="changeTabObj(item.id)" :class="item.id==currentTabObj?'tab-item-active':'tab-item'" v-for="(item,index) in goodsListTab"
 					 :key="index">
 						<view class="tab-item-title">{{item.title}}</view>
 						<view class="tab-item-prompt">{{item.titleDesc}}</view>
@@ -89,38 +79,42 @@
 					</view>
 				</view>
 				<view class="tab-change-obj w100 mg-t-30 mg-b-16 dis-flex flx-w jf-bw">
-					<view class="goods box-sz fl-hd bg-fff bd-r-14 mg-b-22" @click="openGoodsDel($event)" :data-id="goodsItem.id"
+					<view class="goods box-sz fl-hd bg-fff bd-r-14 mg-b-22" :data-id="goodsItem.id" @click="jumpGoodsDel"
 					 v-for="(goodsItem,goodsIndex) in goodsListObj" :key="goodsIndex">
-						<image class="ds-b mx-w-100" :src="imageUrl+goodsItem.imglist[0].imgUrl" mode="widthFix"></image>
+						<view class="goods-pic">
+							<image class="ds-b" :src="imageUrl+goodsItem.imgUrl" mode="widthFix"></image>
+						</view>
 						<view class="goods-title pd-t-22 pd-r-22 pd-b-22 pd-l-22 fon-24 txt-justify txt-clamp-2">
 							{{goodsItem.commodityName}}
 						</view>
-						<view class="exchange-btn fl-l pd-b-2 pd-t-2 pd-l-4 pd-r-4 mg-b-22 mg-l-22 bg-fff bd-r-4 fon-18 col-e61 txt-center">
+						<view class="exchange-btn fl-l pd-b-2 pd-t-2 pd-l-4 pd-r-4 mg-b-22 mg-l-22 bg-fff bd-r-4 fon-28 col-e61 txt-center">
 							热门兑换
 						</view>
 						<view class="goods-msg box-sz w100 pd-b-22 pd-l-22 pd-r-22 dis-flex al-items-center jf-bw">
 							<view class="left dis-flex al-items-center">
 								<image class="mg-r-10" src="/static/images/index/integral-icon.png" mode="widthFix"></image>
-								<text class="fon-20 col-ff8">{{goodsItem.defaultScore}}积分</text>
+								<text class="fon-24 col-ff8 txt-clamp-1">{{goodsItem.defaultScore}}积分</text>
 							</view>
-							<view class="right fon-20 col-aea">
-								{{goodsItem.defaultScore}}人兑换
+							<view class="right fon-24 col-aea txt-clamp-1">
+								{{goodsItem.salnum}}人已兑换
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-	    <!-- 底部导航栏 -->
+		<!-- 底部导航栏 -->
 		<tabBar :tabBarActive="tabBarActive"></tabBar>
 	</view>
 </template>
 
 <script>
-	import tabBar from '../../components/footer.vue'
+	import tabBar from '../../components/footer.vue';
+	import uniNoticeBar from '@/components/uni-notice-bar/uni-notice-bar.vue'
 	export default {
 		components: {
-			tabBar
+			tabBar,
+			uniNoticeBar
 		},
 		data() {
 			return {
@@ -130,55 +124,115 @@
 				bannerList: [],
 				// 导航
 				navList: [],
+				// 推荐商品
+				recommendGoods: [],
 				// 商品列表tab
 				goodsListTab: [],
 				currentTabObj: 1,
 				// 商品列表 obj
 				goodsListObj: [],
 				goodsListid: 0,
+				// 广告
+				advList:[],
+				// 系统消息
+				systemMsg:"",
 				// 底部导航
 				tabBarActive: {
 					state: 1,
 					roundLeft: "14rpx",
 					mulchLeft: "14rpx",
 					elementLeft: "46rpx"
-				}
+				},
+				autoplay: true,
+				interval: 2000,
+				duration: 500,
+				// 获取头像
+				userpic:""
 			}
 		},
-		onLoad() {
-			this.getIndexData();
+		onLoad(options) {
+			// this.login(options);
+			this.initIndexData();
+			this.initGoodsData();
 			this.$nextTick(function() {
 				this.imageUrl = this.$url.imageUrl;
 			})
 		},
 		methods: {
-			// 首页数据
-			getIndexData: function() {
+			//授权登录
+			login:function(options){
 				const that = this;
-				this.$http("/index/getIndexList", {}, "post").then(function(res) {
+				this.$http("/users/saveUsers",{
+					"code":options.code
+				},"post").then(function(res){
+					if(res.data.status=="success"){
+						let obj = {
+							id:res.data.getuser.id,
+							userpic:res.data.getuser.wxHeadPortrait
+						}
+						uni.setStorage({
+							key:"wxUserInfo",
+							data:obj
+						})
+					}
+				}) 
+			},
+			// 首页数据
+			initIndexData: function() {
+				const that = this;
+				that.userpic =  uni.getStorageSync('wxUserInfo');
+				that.$http("/index/getIndexList", {}, "post").then(function(res) {
 					if (res.statusCode == 200) {
 						console.log("首页数据请求", res);
 						// 轮播
 						that.bannerList = res.data.indexList.bannerlist;
 						// 导航
 						that.navList = res.data.indexList.iconlist[0].iconurllist;
+						// 推荐商品
+						that.recommendGoods = res.data.indexList.recommendlist;
 						// 商品列表栏
 						that.goodsListTab = res.data.indexList.linklist;
-						// 商品列表
-						that.goodsListObj = res.data.indexList.linklist[0].commoditylist;
+						// 广告
+						that.advList = res.data.indexList.saleslist;
+						// 系统消息
+						that.systemMsg =  res.data.indexList.msglist[0];
 					}
 				})
 			},
 			// tab切换
-			changeTabObj: function(id, index) {
+			changeTabObj: function(id) {
 				this.currentTabObj = id;
-				this.goodsListObj = this.goodsListTab[index].commoditylist;
+				this.initGoodsData(id);
+			},
+			// 商品列表
+			initGoodsData: function(id = 1) {
+				const that = this;
+				that.$http("/index/getLiklistId", {
+					id: id
+				}, "post").then(function(res) {
+					console.log("商品列表数据", res);
+					if (res.statusCode == 200) {
+						that.goodsListObj = res.data.getindex.commoditylist;
+					}
+				})
 			},
 			// 详情跳转
-			openGoodsDel: function(event) {
+			jumpGoodsDel: function(event) {
 				let id = event.currentTarget.dataset.id;
 				uni.navigateTo({
 					url: "/pages/goodsDetail/index?id=" + id
+				})
+			},
+			// 搜索跳转
+			jumpSearch: function() {
+				uni.navigateTo({
+					url: '/pages/search/index'
+				})
+			},
+			// 系统信息
+			getmore:function(){
+				uni.navigateTo({
+					url:'/pages/notice/index'
 				})
 			}
 		}
@@ -216,6 +270,16 @@
 				width: 430rpx;
 				height: 60rpx;
 				border: solid 1rpx #f2f2f2;
+				position: relative;
+
+				.cover {
+					position: absolute;
+					top: 0;
+					left: 0;
+					bottom: 0;
+					right: 0;
+					z-index: 999;
+				}
 
 				.search-icon {
 					width: 36rpx;
@@ -227,7 +291,7 @@
 				}
 
 				.search-ipt {
-					width: 70%;
+					width: 90%;
 				}
 
 				.search-pls {
@@ -246,16 +310,28 @@
 
 			.user-pic {
 				width: 60rpx;
+				height: 60rpx;
 
 				image {
-					max-width: 100%;
-					align-self: center;
+					width: 100%;
+					height: 100%!important;
+					border-radius: 50%;
 				}
 			}
 
 			.swipe-warpper {
 				width: 706rpx;
+				height: 284rpx;
 				margin: 0 auto;
+				.swiper-item{
+					width: 100%;
+					height: 100%;
+					image{
+						width: 100%;
+						height: 100%!important;
+						border-radius: 30rpx;
+					}
+				}
 			}
 		}
 
@@ -322,7 +398,17 @@
 				width: 225rpx;
 				height: 349rpx;
 			}
-
+             .adversing{
+				 height: 210rpx;
+				 .swiper{
+				 	width: 100%;
+				 	height: 100%;
+				 	image{
+				 		width: 100%;
+				 		height: 100%!important;
+				 	}
+				 }
+			 }
 			.goods-list {
 				width: 100%;
 
@@ -383,6 +469,16 @@
 				.tab-change-obj {
 					.goods {
 						width: 345rpx;
+
+						.goods-pic {
+							width: 100%;
+							height: 346rpx;
+
+							image {
+								width: 100%;
+								height: 100% !important;
+							}
+						}
 
 						.goods-title {
 							line-height: 32rpx;

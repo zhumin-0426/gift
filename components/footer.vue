@@ -5,16 +5,16 @@
 			<view class="cover"></view>
 			<view class="mulch" :style="'left:'+tabBarActive.mulchLeft"></view>
 			<view class="tab-bar-nav-list">
-				<view :class="item.element" class="block" v-for="item in tabBarNavList" :key="item.element">
-					<navigator :url="item.url" hover-class="none">
-						<view :class="item.element+'icon'" class="block-icon" :style="tabBarActive.state==item.id?'width:60rpx;position:absolute;top:4rpx;left:'+tabBarActive.elementLeft:''">
-							<image :src="tabBarActive.state==item.id?item.iconActive:item.icon" mode="widthFix"></image>
-						</view>
-						<view class="txt" :style="tabBarActive.state==item.id?'margin-top:56rpx;':''">
-							{{item.txt}}
-						</view>
-					</navigator>
-				</view>
+				<block v-for="item in tabBarNavList" :key="item.element">
+					<view :class="item.element" class="block" @click="jumpPage(item.url)">
+							<view :class="item.element+'icon'" class="block-icon" :style="tabBarActive.state==item.id?'width:60rpx;position:absolute;top:4rpx;left:'+tabBarActive.elementLeft:''">
+								<image :src="tabBarActive.state==item.id?item.iconActive:item.icon" mode="widthFix"></image>
+							</view>
+							<view class="txt" :style="tabBarActive.state==item.id?'margin-top:56rpx;':''">
+								{{item.txt}}
+							</view>
+					</view>
+				</block>
 			</view>
 		</view>
 	</view>
@@ -69,6 +69,13 @@
 					}
 				]
 			};
+		},
+		methods:{
+			jumpPage:function(url){
+				uni.redirectTo({
+					url:url
+				})
+			}
 		}
 	}
 </script>
@@ -79,6 +86,7 @@
 		position: fixed;
 		left: 0;
 		bottom: 0;
+		z-index: 999999;
 
 		.tab-bar-warper {
 			width: 100%;

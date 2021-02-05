@@ -7,10 +7,10 @@
 						可用积分
 					</view>
 					<view class="integral">
-						¥20
+						{{integral}}
 					</view>
 				</view>
-				<view class="right">
+				<!-- <view class="right">
 					<view class="prompt-item">
 						可用充值币：¥20
 					</view>
@@ -20,17 +20,22 @@
 					<view class="prompt-item">
 						可用充值币：¥20
 					</view>
-				</view>
+				</view> -->
 			</view>
 			<view class="pay-money-list">
-				<view class="pay-money-item active" v-for="(item,index) in moneyList" :key="index">
+				<view :data-id="index" :class="currentVal==index?'active': 'pay-money-item'" v-for="(item,index) in moneyList" :key="index"
+				 @click="tabChange">
 					{{item.txt}}元
 				</view>
 			</view>
 		</view>
 		<view class="content">
 			<view class="pay-way">
-				<view class="pay-way-item" v-for="(item,index) in lkList" :key="index" :style="'background-image: url('+item.icon+')'">
+				<view :class="payType==index?'active':'pay-way-item'" v-for="(item,index) in lkList" :key="index">
+					<view class="cover" :data-id="index" @click="payTypeChange"></view>
+					<view class="icon">
+						<image :src="item.icon" mode=""></image>
+					</view>
 					<view class="txt">
 						{{item.txt}}
 					</view>
@@ -41,7 +46,7 @@
 			</view>
 		</view>
 		<view class="footer">
-			<view class="btn">
+			<view class="btn" @click="payMoney">
 				立即充值
 			</view>
 		</view>
@@ -72,22 +77,81 @@
 					}
 				],
 				lkList: [{
-						txt: "支付宝",
-						icon: '../../../static/images/top-up/zfb.png'
-					},
-					{
 						txt: "微信支付",
 						icon: '../../../static/images/top-up/wx.png'
 					},
-					{
-						txt: "银行卡支付",
-						icon: '../../../static/images/top-up/zx.png'
-					}
-				]
+					// {
+					// 	txt: "支付宝",
+					// 	icon: '../../../static/images/top-up/zfb.png'
+					// }
+				],
+				currentVal: 0,
+				price: "1.0",
+				payType: 0,
+				integral:""
 			}
 		},
+		onLoad(options) {
+			this.integral = options.integral;
+		},
 		methods: {
-
+			tabChange: function(e) {
+				let id = e.target.dataset.id;
+				this.currentVal = id;
+				this.price = this.moneyList[id].txt
+			},
+			payMoney: function() {
+				const that = this;
+				if (that.payType == 0) {
+					// 微信支付 单位为分
+					let userid = uni.getStorageSync('wxUserInfo');
+					that.$http('/order/jspaymoney', {
+						userid: userid.id,
+						money: Number(that.price)*100
+					}, 'post').then(function(res) {
+						console.log("res", res);
+						if (res.statusCode == 200) {
+							WeixinJSBridge.invoke(
+								'getBrandWCPayRequest', {
+									"appId": res.data.appId, //公众号名称，由商户传入     
+									"timeStamp": res.data.timeStamp, //时间戳，自1970年以来的秒数     
+									"nonceStr": res.data.nonceStr, //随机串     
+									"package": res.data.package,
+									"signType": res.data.signType, //微信签名方式：     
+									"paySign": res.data.paySign //微信签名 
+								},
+								function(res) {
+									console.log("微信支付", res);
+									if (res.err_msg == "get_brand_wcpay_request:ok") {
+										// 使用以上方式判断前端返回,微信团队郑重提示：
+										//res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+									    uni.navigateBack({
+									    	delta:1
+									    })
+									}
+								});
+							if (typeof WeixinJSBridge == "undefined") {
+								if (document.addEventListener) {
+									document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+								} else if (document.attachEvent) {
+									document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+									document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+								}
+							} else {
+								onBridgeReady();
+							}
+						}
+					})
+				} else {
+					// 支付宝支付
+					window.location.href = "http://lipinhui.28888753.cn/before/order/apiPayment?userid="+'4'+'&money='+that.price;
+				}
+			},
+			payTypeChange: function(e) {
+				console.log("e", e);
+				let id = e.target.dataset.id;
+				this.payType = id;
+			}
 		}
 	}
 </script>
@@ -171,7 +235,7 @@
 					margin-bottom: 30rpx;
 				}
 
-				.pay-money-item.active {
+				.active {
 					width: 209rpx;
 					height: 114rpx;
 					background-color: #e7eefe;
@@ -196,12 +260,28 @@
 					width: 100%;
 					display: flex;
 					align-items: center;
-					justify-content: space-between;
 					padding: 0 33rpx;
 					padding: 24rpx 42rpx;
 					background-repeat: no-repeat;
 					background-size: 44rpx 44rpx;
 					background-position: 31rpx 24rpx;
+					background-repeat: no-repeat;
+					position: relative;
+                    .icon{
+						width: 44rpx;
+						height: 44rpx;
+						image{
+							width: 100%;
+							height: 100%!important;
+						}
+					}
+					.cover {
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+					}
 
 					.txt {
 						font-size: 29.17rpx;
@@ -222,10 +302,53 @@
 					}
 				}
 
-				.pay-way-item:first-child {
-					margin-bottom: 20rpx;
+				.active {
+					box-sizing: border-box;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					padding: 0 33rpx;
+					padding: 24rpx 42rpx;
+					background-repeat: no-repeat;
+					background-size: 44rpx 44rpx;
+					background-position: 31rpx 24rpx;
+					background-repeat: no-repeat;
 					background-color: #f4f4f4;
 					box-shadow: 0rpx 9rpx 19.1rpx 1.9rpx rgba(93, 93, 93, 0.2);
+					position: relative;
+.icon{
+						width: 44rpx;
+						height: 44rpx;
+						image{
+							width: 100%;
+							height: 100%!important;
+						}
+					}
+					.cover {
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+					}
+
+					.txt {
+						font-size: 29.17rpx;
+						color: #5a5a5a;
+						margin-left: 46rpx;
+					}
+
+					.next {
+
+						width: 10rpx;
+						height: 18rpx;
+
+						image {
+							display: block;
+							width: 100%;
+							height: 100%;
+						}
+					}
 				}
 			}
 		}

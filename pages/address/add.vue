@@ -110,19 +110,23 @@
 					});
 					return;
 				} else {
+					let userid = uni.getStorageSync('wxUserInfo');
 					this.$http("/address/saveUsersAddress", {
+						belongUserId:userid.id,
 						addressDetail: formdata.detailAddress,
 						addressPhone: formdata.phone,
 						addressUsername: formdata.name,
 						addressProvice: that.addressMsg.label.split("-")[0],
 						addressCity: that.addressMsg.label.split("-")[1],
 						addressArea: that.addressMsg.label.split("-")[2],
-						addressProviceCode: that.addressMsg.areaCode,
+						addressProviceCode: that.addressMsg.provinceCode,
 						addressCityCode: that.addressMsg.cityCode,
-						addressAreaCode: that.addressMsg.provinceCode,
+						addressAreaCode: that.addressMsg.areaCode,
 						addressIsDefault: formdata.defaultAddress ? "1" : "2",
 					}, "post").then(function(res) {
-						console.log("保存地址",res);
+						uni.navigateBack({
+						    delta: 1
+						});
 					})
 				}
 			}

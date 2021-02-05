@@ -8,44 +8,54 @@
 		</view>
 		<view class="main">
 			<!-- 记录模块 -->
-			<view class="history" v-for="(item,index) in cashHistoryData" :key="index">
-				<view class="top" v-if="item.getValue!=null">
-					<view class="left" >
-						<view class="date">
-							<!-- 2020年7月 -->
-							{{item.getdate}}
-						</view>
-						<view class="cash-all-history">
-							支付 {{item.payValue}}分 收取{{item.getValue}}分
-						</view>
-					</view>
-					<view class="date-icon">
-						<image src="/static/images/top-up-history/date-icon.png" mode="widthFix"></image>
-					</view>
-				</view>
-				<view class="history-warpper" v-else>
-					<view class="history-item">
-						<view class="left">
-							<view class="user-pic">
-								<image :src="imageUrl+item.user_heard" mode="widthFix"></image>
-							</view>
-							<view class="msg">
-								<view class="name">
-									{{item.userName}}
-								</view>
+			<block v-if="cashHistoryData.length>0">
+				<block v-for="(item,index) in cashHistoryData" :key="index">
+					<view class="history">
+						<view class="top" v-if="item.user_heard==null">
+							<view class="left" >
 								<view class="date">
+									<!-- 2020年7月 -->
 									{{item.getdate}}
 								</view>
+								<view class="cash-all-history">
+									支付 {{item.payValue}}分 收取{{item.getValue}}分
+								</view>
+							</view>
+							<view class="date-icon">
+								<image src="/static/images/top-up-history/date-icon.png" mode="widthFix"></image>
 							</view>
 						</view>
-						<view class="right">
-							<view class="integral">
-								{{item.payValue}}
+						<view class="history-warpper" v-else>
+							<view class="history-item">
+								<view class="left">
+									<view class="user-pic">
+										<image :src="item.user_heard" mode="widthFix"></image>
+									</view>
+									<view class="msg">
+										<view class="name">
+											{{item.userName}}
+										</view>
+										<view class="date">
+											{{item.getdate}}
+										</view>
+									</view>
+								</view>
+								<view class="right">
+									<view class="integral">
+										{{item.payValue}}
+									</view>
+								</view>
 							</view>
 						</view>
 					</view>
+				</block>
+			</block>
+			<block v-else>
+				<view class="no-content">
+					<image src="../../static/images/no_content.png" mode=""></image>
+					<view class="txt">亲,暂无相关数据哦!</view>
 				</view>
-			</view>
+			</block>
 		</view>
 	</view>
 </template>
@@ -68,7 +78,8 @@
 		methods: {
 			integralCashHistory: function() {
 				const that = this;
-				this.$http('/score/getScoreRecordList', {}, 'post').then(function(res) {
+				let userid = uni.getStorageSync('wxUserInfo');
+				that.$http('/score/getScoreRecordList', {belongUserid:userid.id}, 'post').then(function(res) {
 					console.log(res);
 					that.cashHistoryData = res.data.scoreRecordByList;
 				})

@@ -3,65 +3,70 @@
 		<view class="status_bar">
 			<!-- 这里是状态栏 -->
 		</view>
-	<!-- 	<view class="herder">
-			<view class="user-pic">
-				<image src="../../static/images/index/user-pic.png" mode="widthFix"></image>
-			</view>
-			<view class="title">
-				我的收藏
-			</view>
-			<view class="search">
-				<view class="icon">
-					<image src="../../static/images/collec/search-icon.png" mode="widthFix"></image>
-				</view>
-			</view>
-		</view> -->
 		<view class="content">
-			<view class="collec-item" v-for="(item,index) in collecList" :key="index">
-				<view class="business">
-					<view class="business-logo">
-						<image :src="imageUrl+item.commodityVO.logo" mode="widthFix"></image>
+			<block v-if="collecList.length>0">
+				<block v-for="(item,index) in collecList" :key="index">
+					<view class="collec-item">
+						<view class="business">
+							<view class="business-logo">
+								<image :src="imageUrl+item.commodityVO.logo" mode="widthFix"></image>
+							</view>
+							<view class="calcel-collec" :data-id="item.id" @click="removeCollec">
+								取消收藏
+							</view>
+						</view>
+						<view class="adversing">
+							<image :src="imageUrl+item.commodityVO.imglist[0].imgUrl" mode="widthFix"></image>
+						</view>
+						<view class="goods-data">
+							<view class="left">
+								<view class="goods-get">
+									<view class="goods-get-icon">
+										<image src="/static/images/collec/goods-get-icon.png" mode="widthFix"></image>
+									</view>
+									<text>{{item.commodityVO.salnum}}人已领</text>
+								</view>
+							</view>
+							<view class="right">
+								<block v-if="item.commodityVO.isgood>0">
+									<view class="like-active">
+										<view class="like-icon">
+											<image :data-isgood="item.commodityVO.isgood" :data-id="item.commodityVO.id" @click="giveLike" src="/static/images/collec/like-icon-active.png"
+											 mode="widthFix"></image>
+										</view>
+										<text>{{item.commodityVO.goodcount}}</text>
+										<text>点赞</text>
+									</view>
+								</block>
+								<block v-else>
+									<view class="like">
+										<view class="like-icon">
+											<image :data-isgood="item.commodityVO.isgood" :data-id="item.commodityVO.id" @click="giveLike" src="/static/images/collec/like-icon.png"
+											 mode="widthFix"></image>
+										</view>
+										<text>{{item.commodityVO.goodcount}}</text>
+										<text>点赞</text>
+									</view>
+								</block>
+								<!-- #ifdef MP-WEIXIN -->
+								<view class="share" @click="shareOpen">
+									<view class="share-icon">
+										<image src="/static/images/collec/share-icon.png" mode="widthFix"></image>
+									</view>
+									<text>分享</text>
+								</view>
+								<!--  #endif -->
+							</view>
+						</view>
 					</view>
-					<view class="calcel-collec">
-						取消收藏
-					</view>
+				</block>
+			</block>
+			<block v-else>
+				<view class="no-content">
+					<image src="../../static/images/no_content.png" mode=""></image>
+					<view class="txt">亲,暂无相关数据哦!</view>
 				</view>
-				<view class="adversing">
-					<image :src="imageUrl+item.commodityVO.imglist[0].imgUrl" mode="widthFix"></image>
-				</view>
-				<view class="goods-data">
-					<view class="left">
-						<view class="goods-get">
-							<view class="goods-get-icon">
-								<image src="/static/images/collec/goods-get-icon.png" mode="widthFix"></image>
-							</view>
-							<text>{{item.commodityVO.salnum}}人已领</text>
-						</view>
-					</view>
-					<view class="right">
-						<view class="like-active" @click="giveLike(item.id)" v-if="item.isgood>0">
-							<view class="like-icon">
-								<image src="/static/images/collec/like-icon-active.png" mode="widthFix"></image>
-							</view>
-							<text>{{item.commodityVO.goodcount}}</text>
-							<text>点赞</text>
-						</view>
-						<view class="like" @click="giveLike(item.id)" v-else>
-							<view class="like-icon">
-								<image src="/static/images/collec/like-icon.png" mode="widthFix"></image>
-							</view>
-							<text>{{item.commodityVO.goodcount}}</text>
-							<text>点赞</text>
-						</view>
-						<view class="share" @click="shareOpen">
-							<view class="share-icon">
-								<image src="/static/images/collec/share-icon.png" mode="widthFix"></image>
-							</view>
-							<text>分享</text>
-						</view>
-					</view>
-				</view>
-			</view>
+			</block>
 		</view>
 		<!-- 分享栏 -->
 		<uni-popup ref="popup" type="bottom">
@@ -109,15 +114,15 @@
 		data() {
 			return {
 				// 图片路径
-				imageUrl:"",
-				collecList:[]
+				imageUrl: "",
+				collecList: []
 			}
 		},
 		onLoad() {
-			this.$nextTick(function(){
+			this.$nextTick(function() {
 				this.imageUrl = this.$url.imageUrl;
 			})
-			this.myCollecData();
+			this.initCollecData();
 		},
 		methods: {
 			shareOpen() {
@@ -127,21 +132,39 @@
 				this.$refs.popup.close()
 			},
 			// 我的收藏
-			myCollecData: function() {
+			initCollecData: function() {
 				const that = this;
-				this.$http('/users/getUserCollect', {}, 'post').then(function(res) {
-					console.log(res);
-					if(res.data.status=='success'){
+				let userid = uni.getStorageSync('wxUserInfo');
+				this.$http('/users/getUserCollect', {belongUserId:userid.id}, 'post').then(function(res) {
+					if (res.data.status == 'success') {
 						that.collecList = res.data.userCollectByList
 					}
 				})
 			},
+			// 取消收藏
+			removeCollec: function(e) {
+				const that = this;
+				const id = e.target.dataset.id;
+				that.$http('/users/cancelUserCollect', {
+					id: id
+				}, 'post').then(function(res) {
+					that.initCollecData();
+				})
+			},
 			// 点赞
-			giveLike:function(id){
-				this.$http('/users/setCollectGood',{
-					collectCommodityId:id
-				},'post').then(function(res){
-					console.log(res)
+			giveLike: function(e) {
+				console.log("a")
+				const that = this;
+				const id = e.target.dataset.id;
+				const isgood = e.target.dataset.isgood;
+				let userid = uni.getStorageSync('wxUserInfo');
+				that.$http('/users/setCollectGood', {
+					collectCommodityId: Number(id),
+					userid:userid.id,
+					isgood:Number(isgood)
+				}, 'post').then(function(res) {
+					console.log("res",res)
+					that.initCollecData();
 				})
 			}
 		}
@@ -221,10 +244,13 @@
 					justify-content: space-between;
 
 					.business-logo {
-						width: 148rpx;
+						width: 44rpx;
+						height: 44rpx;
 
 						image {
-							max-width: 148rpx;
+							display: block;
+							width: 44rpx;
+							height: 44rpx;
 						}
 					}
 
@@ -233,7 +259,7 @@
 						height: 33rpx;
 						background-color: #aeaeae;
 						border-radius: 5rpx;
-						font-size: 20rpx;
+						font-size: 28rpx;
 						line-height: 32rpx;
 						letter-spacing: -0.2rpx;
 						color: #ffffff;
@@ -251,6 +277,7 @@
 					image {
 						display: block;
 						width: 100%;
+						height: 100% !important;
 					}
 				}
 
@@ -265,7 +292,6 @@
 						.goods-get {
 							display: flex;
 							align-items: center;
-
 							.goods-get-icon {
 								width: 32rpx;
 								height: 32rpx;
@@ -278,7 +304,7 @@
 							}
 
 							text {
-								font-size: 20rpx;
+								font-size: 26rpx;
 								line-height: 32rpx;
 								letter-spacing: 0rpx;
 								color: #1a1a1a;
@@ -308,28 +334,29 @@
 							}
 
 							text {
-								font-size: 20rpx;
+								font-size: 26rpx;
 								color: #aeaeae;
 							}
 						}
+
 						.like-active {
 							display: flex;
 							align-items: center;
 							margin-right: 34rpx;
-						
+
 							.like-icon {
 								width: 34rpx;
 								// height: 29rpx;
 								margin-right: 12rpx;
-						
+
 								image {
 									display: block;
 									width: 100%;
 								}
 							}
-						
+
 							text {
-								font-size: 20rpx;
+								font-size: 26rpx;
 								color: #FF0000;
 							}
 						}

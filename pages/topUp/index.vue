@@ -7,33 +7,35 @@
 						可用积分
 					</view>
 					<view class="integral">
-						20
+						{{integral}}
 					</view>
-					<navigator url="/pages/topUp/pay/pay">
+					<navigator :url="'/pages/topUp/pay/pay?integral='+integral">
 						<view class="btn-lk">
 							在线充值 >
 						</view>
 					</navigator>
 				</view>
-				<view class="right">
+				<!-- <view class="right">
 					<view class="title">
 						余额
 					</view>
 					<view class="integral">
 						<text>85</text><text>¥</text>
 					</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<view class="lk-list">
-			<view class="lk-item" v-for="(item,index) in lkList" :key="index">
-				<view class="txt">
-					{{item.txt}}
+			<navigator url="/pages/integralTopUpHis/index">
+				<view class="lk-item" v-for="(item,index) in lkList" :key="index">
+					<view class="txt">
+						{{item.txt}}
+					</view>
+					<view class="next">
+						<image src="../../static/images/top-up/next.png" mode="widthFix"></image>
+					</view>
 				</view>
-				<view class="next">
-					<image src="../../static/images/top-up/next.png" mode="widthFix"></image>
-				</view>
-			</view>
+			</navigator>
 		</view>
 	</view>
 </template>
@@ -43,25 +45,27 @@
 		data() {
 			return {
 				lkList: [{
-						txt: "积分明细"
-					},
-					{
-						txt: "已购内容"
-					},
-					{
-						txt: "交易记录"
-					},
-					{
-						txt: "赠送记录"
-					},
-					{
-						txt: "消息记录"
-					}
-				]
+					txt: "交易记录"
+				}, ],
+				integral: ""
 			}
 		},
+		onShow() {
+			this.initUserData();
+		},
 		methods: {
-
+			initUserData: function() {
+				const that = this;
+				let userid = uni.getStorageSync('wxUserInfo');
+				this.userid = userid.id;
+				that.$http('/users/getUserCenter', {
+					id: userid.id
+				}, 'post').then(function(res) {
+					if (res.data.status == "success") {
+						that.integral = res.data.getuser.userScore;
+					}
+				})
+			},
 		}
 	}
 </script>

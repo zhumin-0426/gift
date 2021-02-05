@@ -19,7 +19,7 @@
 		</view>
 		<view v-if="showGetMore === true || showGetMore === 'true'" class="uni-noticebar__more" @click="clickMore">
 			<text v-if="moreText" :style="{ color: moreColor }" class="uni-noticebar__more-text">{{ moreText }}</text>
-			<uni-icons type="arrowright" :color="moreColor" size="14" />
+			<!-- <uni-icons type="arrowright" :color="moreColor" size="14" /> -->
 		</view>
 	</view>
 </template>
@@ -333,7 +333,7 @@
 	}
 
 	.uni-noticebar__content-text {
-		font-size: 14px;
+		font-size: 13px;
 		line-height: 18px;
 		/* #ifndef APP-NVUE */
 		word-break: break-all;

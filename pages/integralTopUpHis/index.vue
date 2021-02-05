@@ -9,39 +9,53 @@
 		<view class="main">
 			<!-- 记录模块 -->
 			<view class="history">
-				<view class="top">
-					<view class="date">
-						7月
+				<block v-if="topUpHistory.length>0">
+				    <block v-for="(item,index) in topUpHistory">
+				    	<block v-if="item.usersVO.wxHeadPortrait==''">
+				    		<view class="top">
+				    			<view class="date">
+				    				{{item.selDate}}
+				    			</view>
+				    			<view class="date-icon">
+				    				<image src="/static/images/top-up-history/date-icon.png" mode="widthFix"></image>
+				    			</view>
+				    		</view>
+				    	</block>
+				    	<block v-else>
+				    		<view class="history-warpper">
+				    			<view class="history-item">
+				    				<view class="left">
+				    					<view class="user-pic">
+				    						<image :src="item.usersVO.wxHeadPortrait" mode="widthFix"></image>
+				    					</view>
+				    					<view class="msg">
+				    						<view class="name">
+				    							{{item.usersVO.usersName}}
+				    						</view>
+				    						<view class="date">
+				    							{{item.selDate}}
+				    						</view>
+				    					</view>
+				    				</view>
+				    				<view class="right">
+				    					<view class="integral">
+				    						+ {{item.changerValue}}
+				    					</view>
+				    					<view class="prompt">
+				    						充值成功
+				    					</view>
+				    				</view>
+				    			</view>
+				    		</view>
+				    	</block>
+				    </block>
+				</block>
+				<block v-else>
+					<view class="no-content">
+						<image src="../../static/images/no_content.png" mode=""></image>
+						<view class="txt">亲,暂无相关数据哦!</view>
 					</view>
-					<view class="date-icon">
-						<image src="/static/images/top-up-history/date-icon.png" mode="widthFix"></image>
-					</view>
-				</view>
-				<view class="history-warpper">
-					<view class="history-item">
-						<view class="left">
-							<view class="user-pic">
-								<image src="/static/images/top-up-history/user-pic.jpeg" mode="widthFix"></image>
-							</view>
-							<view class="msg">
-								<view class="name">
-									走来走去
-								</view>
-								<view class="date">
-									7月16日11:12
-								</view>
-							</view>
-						</view>
-						<view class="right">
-							<view class="integral">
-								+ 2000
-							</view>
-							<view class="prompt">
-								充值成功
-							</view>
-						</view>
-					</view>
-				</view>
+				</block>
 			</view>
 		</view>
 	</view>
@@ -51,18 +65,23 @@
 	export default {
 		data() {
 			return {
-			
+				topUpHistory: []
 			}
 		},
-		onLoad(){
+		onLoad() {
 			this.topUp()
 		},
 		methods: {
 			topUp: function() {
-				this.$http('/changer/getChangerRecordList', {
-					selDate: ''
+				const that = this;
+				const userid = uni.getStorageSync('wxUserInfo');
+				that.$http('/changer/getChangerRecordList', {
+					belongUserid :userid.id
 				}, 'post').then(function(res) {
-					console.log(res);
+					console.log('充值记录', res);
+					if (res.statusCode == 200) {
+						that.topUpHistory = res.data.changerRecordByList;
+					}
 				})
 			}
 		}

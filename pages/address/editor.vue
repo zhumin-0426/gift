@@ -54,23 +54,31 @@
 			<!-- 省,市,区 三级联动-->
 			<simple-address ref="simpleAddress" :pickerValueDefault="cityPickerValueDefault" @onConfirm="onConfirm" themeColor="#007AFF"></simple-address>
 		</form>
+		<!-- 提示框 -->
+		<uni-popup ref="popup" type="dialog">
+			<uni-popup-dialog type="input" title="提示" content="确定删除该地址吗？" :duration="2000" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import simpleAddress from '@/components/simple-address/simple-address.vue';
+	import uniPopup from '@/components/uni-popup/uni-popup.vue';
+	import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue';
 	export default {
 		components: {
-			simpleAddress
+			simpleAddress,
+			uniPopup,
+			uniPopupDialog
 		},
 		data() {
 			return {
 				cityPickerValueDefault: [0, 0, 1],
 				pickerText: '',
-				name:"",
-				phone:"",
-				detailAddress:"",
-				checked:false,
+				name: "",
+				phone: "",
+				detailAddress: "",
+				checked: false,
 				address: "",
 				addressMsg: {},
 				addressId: "",
@@ -102,22 +110,31 @@
 					that.cityPickerValueDefault = [res.data.usersAddressById.addressProviceCode, res.data.usersAddressById.addressCityCode,
 						res.data.usersAddressById.addressAreaCode
 					];
-					that.address = res.data.usersAddressById.addressProvice+'-' + res.data.usersAddressById.addressCity+'-' +
+					that.address = res.data.usersAddressById.addressProvice + '-' + res.data.usersAddressById.addressCity + '-' +
 						res.data.usersAddressById.addressArea;
-					that.name= res.data.usersAddressById.addressUsername;
+					that.name = res.data.usersAddressById.addressUsername;
 					that.phone = res.data.usersAddressById.addressPhone;
 					that.detailAddress = res.data.usersAddressById.addressDetail;
-					that.checked = res.data.usersAddressById.addressIsDefault==1?true:false;
+					that.checked = res.data.usersAddressById.addressIsDefault == 1 ? true : false;
 				})
 			},
 			// 删除地址
 			delAddress: function() {
+				this.$refs.popup.open()
+			},
+			close(done) {
+				done()
+			},
+			confirm(done) {
 				const that = this;
 				this.$http('/address/delUsersAddress', {
 					id: that.addressId
 				}, 'post').then(function(res) {
-					console.log("删除用户地址", res)
+					uni.navigateBack({
+						delta: 1
+					});
 				})
+				done()
 			},
 			// 表单提交
 			formSubmit: function(e) {
@@ -149,20 +166,24 @@
 					});
 					return;
 				} else {
+					let userid = uni.getStorageSync('wxUserInfo');
 					this.$http("/address/saveUsersAddress", {
-						id:that.addressId,
+						id: that.addressId,
+						belongUserId:userid.id,
 						addressDetail: formdata.detailAddress,
 						addressPhone: formdata.phone,
 						addressUsername: formdata.name,
 						addressProvice: that.address.split("-")[0],
 						addressCity: that.address.split("-")[1],
 						addressArea: that.address.split("-")[2],
-						addressProviceCode: that.addressMsg.areaCode,
+						addressProviceCode: that.addressMsg.provinceCode,
 						addressCityCode: that.addressMsg.cityCode,
-						addressAreaCode: that.addressMsg.provinceCode,
+						addressAreaCode: that.addressMsg.areaCode,
 						addressIsDefault: formdata.defaultAddress ? "1" : "2",
 					}, "post").then(function(res) {
-						console.log("保存地址", res);
+						uni.navigateBack({
+							delta: 1
+						});
 					})
 				}
 			}

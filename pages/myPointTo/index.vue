@@ -2,20 +2,29 @@
 	<view class="container">
 		<view class="content">
 			<!-- 关注动态 -->
-			<view class="focus-state-module">
-				<view class="title">
-					我关注的品牌
-				</view>
-				<view class="main">
-					<view class="brand">
-						<view class="brand-logo-item">
-							<view class="brand-logo">
-								<image src="/static/images/found/logo1.png" mode="widthFix"></image>
-							</view>
+			<block v-if="businessLogo!=[]">
+				<view class="focus-state-module">
+					<view class="title">
+						我关注的品牌
+					</view>
+					<view class="main">
+						<view class="brand">
+							<block v-for="(item,index) in businessLogo" :key="index">
+								<view class="brand-logo-item">
+									<view class="brand-logo">
+										<image :src="imageUrl+item.supplierLogo" mode="widthFix"></image>
+									</view>
+								</view>
+							</block>
 						</view>
 					</view>
 				</view>
-			</view>
+			</block>
+			<block v-else>
+				<view>
+					暂无关注！
+				</view>
+			</block>
 		</view>
 	</view>
 </template>
@@ -24,23 +33,32 @@
 	export default {
 		data() {
 			return {
-
+				// 图片路径
+				imageUrl: "",
+				businessLogo:[]
 			}
 		},
-		onLoad(){
-			this.myPointData()
+		onLoad() {
+			this.myPointData();
+			this.$nextTick(function() {
+				this.imageUrl = this.$url.imageUrl;
+			})
 		},
 		methods: {
-            myPointData:function(){
-				this.$http('/users/getUserFollow',{},'post').then(function(res){
-					console.log(res)
+			myPointData: function() {
+				const that = this;
+				this.$http('/users/getUserFollow', {}, 'post').then(function(res) {
+					console.log('我的关注', res);
+					if (res.statusCode == 200) {
+						that.businessLogo = res.data.commoditySupplierByList;
+					}
 				})
 			}
 		}
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 	page {
 		background-color: #f6f6f6;
 	}
@@ -80,7 +98,6 @@
 						width: 100%;
 						display: flex;
 						flex-wrap: wrap;
-						justify-content: space-between;
 						position: relative;
 						margin-top: 33rpx;
 

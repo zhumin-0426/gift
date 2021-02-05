@@ -1,4 +1,4 @@
 module.exports = {
 	// baseUrl:"/api/IntegralShop/before" ,//local
-	baseUrl:"/api/before" //online
+	baseUrl:"api/before" //online
 }

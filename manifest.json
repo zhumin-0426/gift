@@ -48,20 +48,26 @@
         }
     },
     "h5" : {
-		"devServer" : {
-		    "port" : 8080,
-		    "disableHostCheck" : true,
-		    "proxy" : {
-		        "/api" : {
-		            "target" : "http://lipinhui.28888753.cn",
-		            "changeOrigin" : true,
-		            "secure" : false,
-					"pathRewrite":{"^/api":""}
-		        }
-		    }
-		},
+        "devServer" : {
+            "port" : "",
+            "disableHostCheck" : true,
+            "proxy" : {
+                "/api" : {
+                    "target" : "http://lipinhui.28888753.cn",
+                    "changeOrigin" : true,
+                    "secure" : false,
+                    "pathRewrite" : {
+                        "^/api" : ""
+                    }
+                }
+            }
+        },
         "router" : {
-            "base" : ""
-        }
+            "base" : "./",
+            "mode" : "history"
+        },
+        "title" : "首页",
+        "template" : "",
+        "domain" : "http://lipinhui.28888753.cn"
     }
 }

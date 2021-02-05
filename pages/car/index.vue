@@ -9,64 +9,82 @@
 					购物车
 				</view>
 				<view class="fon-28" @click="openManage">
-					管理
+					<block v-if="manageAct">
+						管理
+					</block>
+					<block v-else>
+						完成
+					</block>
 				</view>
 			</view>
 			<!--订单列表-->
-			<view class="order-wrapper" v-for="(item,index) in carListData" :key="index">
-				<view class="order-item">
-					<view class="business">
-						<view class="store-logo dis-flex al-items-center">
-							<checkbox-group class="store-goods-all" @change="storeAllCheck(item)">
-								<view :class="item.storeCheckAll==true?'cover-active':'cover'"></view>
-								<checkbox style="opacity: 0;position:absolute;top:0;left:0;z-index:2;" value="item" :checked="item.storeCheckAll"></checkbox>
-							</checkbox-group>
-							<view class="business-logo">
-								<image src="/static/images/order/business-logo1.png" mode="widthFix"></image>
-							</view>
-						</view>
-						<view class="coupon">
-							领劵
-						</view>
-					</view>
-					<!-- 商品列表 -->
-					<view class="goods" v-for="(goodsItem,goodsIndex) in item.goodsList" :key="goodsIndex">
-						<checkbox-group class="goods-check" @change="changeItemCheck(goodsItem)">
-							<view :class="goodsItem.flag==true?'cover-active':'cover'"></view>
-							<checkbox style="position:absolute;top:0;left:0;z-index:2;border: solid 1px blue;opacity: 0;" value="item"
-							 :checked="goodsItem.flag"></checkbox>
-						</checkbox-group>
-						<view class="goods-icon">
-							<image src="/static/images/order/goods-icon2.png" mode="widthFix"></image>
-						</view>
-						<view class="goods-msg">
-							<view class="title">{{goodsItem.goodsName}}绿恒源全棉印花四件套 HYX-020TJ绿罗伊</view>
-							<view class="promotion">
-								<view class="title">
-									促销
+			<block v-if="carListData.length>0">
+				<block v-for="(item,index) in carListData" :key="index">
+					<view class="order-wrapper">
+						<view class="order-item">
+							<view class="business">
+								<view class="store-logo dis-flex al-items-center">
+									<checkbox-group class="store-goods-all" @change="storeAllCheck(item)">
+										<view :class="item.storeCheckAll==true?'cover-active':'cover'"></view>
+										<checkbox style="opacity: 0;position:absolute;top:0;left:0;z-index:2;" value="item" :checked="item.storeCheckAll"></checkbox>
+									</checkbox-group>
+									<view class="business-logo">
+										<image :src="imageUrl+item.supplierShowPic" mode="widthFix"></image>
+									</view>
 								</view>
-								<view class="prompt">
-									每两套减200
-								</view>
+								<!-- <view class="coupon">
+									领劵
+								</view> -->
 							</view>
-							<view class="integral-num">
-								<view class="integral">
-									<text>12000</text><text>积分</text>
+							<!-- 商品列表 -->
+							<view class="goods" v-for="(goodsItem,goodsIndex) in item.commoditylist" :key="goodsIndex">
+								<view class="cover" :data-id="goodsItem.id" @click="jumpGoodsDel"></view>
+								<checkbox-group class="goods-check" @change="changeItemCheck(goodsItem)">
+									<view :class="goodsItem.flag==true?'cover-active':'cover'"></view>
+									<checkbox style="position:absolute;top:0;left:0;z-index:2;border: solid 1px blue;opacity: 0;" value="item"
+									 :checked="goodsItem.flag"></checkbox>
+								</checkbox-group>
+								<view class="goods-icon">
+									<image :src="imageUrl+goodsItem.commodityArgVO.imgUrl" mode="widthFix"></image>
+								</view>
+								<view class="goods-msg">
+									<view class="title">{{goodsItem.commodityDescribe}}</view>
+									<view class="promotion">
+										<view class="title">
+											促销
+										</view>
+										<block v-for="(promotionItem,promotionIndex) in goodsItem.promotelist" :key="promotionIndex">
+											<view class="prompt txt-clamp-1">
+												{{promotionItem.promoteTitle}}
+											</view>
+										</block>
+									</view>
+									<view class="integral-num">
+										<view class="integral">
+											<text>{{goodsItem.commodityArgVO.score}}</text><text>积分</text>
+										</view>
+									</view>
 								</view>
 								<view class="num">
-									<view class="reduse" @click="reduseGoods(index,goodsIndex)">
+									<view class="reduse" @click="reduseGoods(index,goodsIndex,goodsItem.shopCarId)">
 										-
 									</view>
-									<input type="text" :value="goodsItem.goodsNum" @blur="inputChange($event,index,goodsIndex)" />
-									<view class="add" @click="addGoods(index,goodsIndex)">
+									<input type="text" :value="goodsItem.carNum" @blur="inputChange($event,index,goodsIndex,goodsItem.shopCarId,goodsItem.hasnum,goodsItem.maxNumber)" />
+									<view class="add" @click="addGoods(index,goodsIndex,goodsItem.shopCarId,goodsItem.hasnum,goodsItem.maxNumber)">
 										+
 									</view>
 								</view>
 							</view>
 						</view>
 					</view>
+				</block>
+			</block>
+			<block v-else>
+				<view class="no-content">
+					<image src="../../static/images/no_content.png" mode=""></image>
+					<view class="txt">亲,暂无相关数据哦!</view>
 				</view>
-			</view>
+			</block>
 		</view>
 		<view class="footer">
 			<view class="left dis-flex al-items-center">
@@ -81,33 +99,40 @@
 			<view class="settlement" v-if="manageAct">
 				<view class="all-integral">
 					<text>合计：</text>
-					<text>1800积分</text>
+					<text>{{total}}积分</text>
 				</view>
-				<view class="btn">
-					结算({{allNum}})
+				<view class="btn" @click="settlement">
+					结算({{goodsTotal}})
 				</view>
 			</view>
 			<view class="btn-warpper" v-else>
-				<view class="collec-btn">
+				<view class="collec-btn" @click="goodsCollect">
 					加入收藏
 				</view>
-				<view class="delete-btn">
+				<view class="delete-btn" @click="deleteGoods">
 					删除
 				</view>
 			</view>
 		</view>
+		<!-- 消息提示 -->
+		<mpopup ref="msgPopup" :isdistance="true"></mpopup>
+		<!-- 底部导航 -->
 		<tabBar :tabBarActive="tabBarActive"></tabBar>
 	</view>
 </template>
 
 <script>
-	import tabBar from '../../components/footer.vue'
+	import tabBar from '../../components/footer.vue';
+	import mpopup from 'components/xuan-popup/xuan-popup.vue';
 	export default {
 		components: {
-			tabBar
+			tabBar,
+			mpopup
 		},
 		data() {
 			return {
+				// 图片路径
+				imageUrl: "",
 				// 底部导航
 				tabBarActive: {
 					state: 4,
@@ -115,83 +140,173 @@
 					mulchLeft: "464rpx",
 					elementLeft: "496rpx"
 				},
-				// 	选择框颜色
-				checkColor: "red",
 				// 管理
 				manageAct: true,
 				// 购物车列表
-				carListData: [{
-						storeCheckAll: false,
-						goodsList: [{
-							flag: false,
-							goodsName: "1",
-							goodsNum: 3
-						}]
-					},
-					{
-						storeCheckAll: false,
-						goodsList: [{
-								flag: false,
-								goodsName: "2",
-								goodsNum: 4
-							},
-							{
-								flag: false,
-								goodsName: "3",
-								goodsNum: 5
-							},
-							{
-								flag: false,
-								goodsName: "4",
-								goodsNum: 6
-							}
-						]
-					}
-				],
+				carListData: [],
 				// 全选
 				allCheck: false,
-				// 总数量
-				allNum: 0
+				// 合计
+				total: 0,
+				// 商品总数量
+				goodsTotal: 0
 			}
 		},
 		onLoad() {
-			this.initData();
+			this.initCarData();
+			this.$nextTick(function() {
+				this.imageUrl = this.$url.imageUrl;
+			});
 		},
 		methods: {
 			// 数据初始化
-			initData: function() {
-				this.$http('/commodity/getShopCarList', {}, 'post').then(function(res) {
-					console.log("initData=>", res)
+			initCarData: function() {
+				const that = this;
+				let userid = uni.getStorageSync('wxUserInfo');
+				that.$http('/commodity/getShopCarList', {
+					belongUserId:userid.id
+				}, 'post').then(function(res) {
+					console.log("购物车数据初始化=>", res.data.usersShopCarByList);
+					if (res.statusCode == 200) {
+						that.carListData = res.data.usersShopCarByList;
+					}
 				})
 			},
 			// 商品管理
 			openManage: function() {
 				this.manageAct = !this.manageAct
 			},
+			// 详情跳转
+			jumpGoodsDel:function(e){
+				let id = e.target.dataset.id;
+				uni.navigateTo({
+					url:'/pages/goodsDetail/index?id='+id
+				})
+			},
 			// 商品数量减少
-			reduseGoods: function(index, goodsIndex) {
+			reduseGoods: function(index, goodsIndex, id) {
 				let carListData = this.carListData;
-				let goodsNum = carListData[index].goodsList[goodsIndex].goodsNum;
-				if (goodsNum > 1) {
-					goodsNum = goodsNum - 1;
-					carListData[index].goodsList[goodsIndex].goodsNum = goodsNum;
+				let carNum = carListData[index].commoditylist[goodsIndex].carNum;
+				if (carNum > 1) {
+					carNum = carNum - 1;
+					carListData[index].commoditylist[goodsIndex].carNum = carNum;
+					this.changeGoodsNum(id, carNum);
 				} else {
-					console.log("再减就没有了")
+					this.$refs.msgPopup.open({
+						type: 'warn',
+						content: '亲，数量最小为1哦！',
+						timeout: 3000,
+						isClick: false
+					});
 				}
 			},
 			// 输入框监听事件
-			inputChange: function(event, index, goodsIndex) {
+			inputChange: function(event, index, goodsIndex, id,haveBuyGoodsNum,maxGoodsNum) {
 				let carListData = this.carListData;
-				let goodsNum = carListData[index].goodsList[goodsIndex].goodsNum;
-				goodsNum = event.detail.value;
-				carListData[index].goodsList[goodsIndex].goodsNum = goodsNum;
+				let carNum = carListData[index].commoditylist[goodsIndex].carNum;
+				carNum = event.detail.value;
+				// 为零时不限量
+				if(Number(maxGoodsNum)==0){
+					carListData[index].commoditylist[goodsIndex].carNum = Number(carNum);
+					this.changeGoodsNum(id, carNum);	
+				}else{
+				    if(Number(carNum)<Number(maxGoodsNum)-Number(haveBuyGoodsNum)){
+				       carListData[index].commoditylist[goodsIndex].carNum = Number(carNum);
+				       this.changeGoodsNum(id, carNum);	
+				    }else{
+				    	this.$refs.msgPopup.open({
+				    		type: 'err',
+				    		content: '亲，超出兑换的最大数量了哦！',
+				    		timeout: 3000,
+				    		isClick: false
+				    	});
+				    }	
+				}
 			},
 			// 添加
-			addGoods: function(index, goodsIndex) {
+			addGoods: function(index, goodsIndex, id,haveBuyGoodsNum,maxGoodsNum) {
 				let carListData = this.carListData;
-				let goodsNum = carListData[index].goodsList[goodsIndex].goodsNum;
-				goodsNum = goodsNum + 1;
-				carListData[index].goodsList[goodsIndex].goodsNum = goodsNum;
+				let carNum = carListData[index].commoditylist[goodsIndex].carNum;
+				// 为零时不限量
+				if(Number(maxGoodsNum)==0){
+					carNum = carNum + 1;
+					carListData[index].commoditylist[goodsIndex].carNum = carNum;
+					this.changeGoodsNum(id, carNum);	
+				}else{
+				    if(carNum<Number(maxGoodsNum)-Number(haveBuyGoodsNum)){
+				       carNum = carNum + 1;
+				       carListData[index].commoditylist[goodsIndex].carNum = carNum;
+				       this.changeGoodsNum(id, carNum);	
+				    }else{
+				    	this.$refs.msgPopup.open({
+				    		type: 'err',
+				    		content: '亲，超出兑换的最大数量了哦！',
+				    		timeout: 3000,
+				    		isClick: false
+				    	});
+				    }	
+				}
+			},
+			// 商品数量增加/减少/输入
+			changeGoodsNum: function(id, num) {
+				const that = this;
+				this.$http('/commodity/updateShopCarNum', {
+					id: id,
+					carNum: num
+				}, 'post').then(function(res) {
+					if (res.statusCode == 200 && res.data.status == "success") {}
+				})
+				this.totalHondel();
+			},
+			// 收藏商品
+			goodsCollect: function() {
+				const that = this;
+				let arr = [];
+				for (let i = 0; i < that.carListData.length; i++) {
+					for (let x = 0; x < that.carListData[i].commoditylist.length; x++) {
+						let flag = that.carListData[i].commoditylist[x].flag;
+						let id = that.carListData[i].commoditylist[x].id
+						if (flag) {
+							arr.push(id)
+						}
+					}
+				}
+				console.log("arr", arr)
+				let userid = uni.getStorageSync('wxUserInfo');
+				that.$http('/users/saveUserCollect', {
+					belongUserId: userid.id,
+					collectCommodityIds: arr
+				}, 'post').then(function(res) {
+					if (res.statusCode == 200) {
+						that.$refs.msgPopup.open({
+							type: 'success',
+							content: '亲，商品加入收藏成功哦！',
+							timeout: 3000,
+							isClick: false
+						});
+					}
+				})
+			},
+			// 删除商品
+			deleteGoods: function() {
+				const that = this;
+				let arr = [];
+				for (let i = 0; i < that.carListData.length; i++) {
+					for (let x = 0; x < that.carListData[i].commoditylist.length; x++) {
+						let flag = that.carListData[i].commoditylist[x].flag;
+						let id = that.carListData[i].commoditylist[x].shopCarId
+						if (flag) {
+							arr.push(id)
+						}
+					}
+				}
+				let ids = arr.join(',');
+				that.$http('/commodity/delShopCarNum', {
+					ids: ids
+				}, 'post').then(function(res) {
+					that.initCarData();
+				})
+				this.totalHondel();
 			},
 			// 单选
 			changeItemCheck: function(goodsItem) {
@@ -205,7 +320,8 @@
 			// 单选判断
 			radioJudge: function() {
 				for (let i = 0; i < this.carListData.length; i++) {
-					let text = this.carListData[i].goodsList.every((item) => {
+					// 商家按钮
+					let text = this.carListData[i].commoditylist.every((item) => {
 						return item.flag === true;
 					})
 					if (text) {
@@ -213,7 +329,19 @@
 					} else {
 						this.carListData[i].storeCheckAll = false;
 					}
+					// 全选按钮
+					if (this.carListData[i].storeCheckAll) {
+						let bol = this.carListData.every(item => {
+							return item.storeCheckAll === true;
+						})
+						if (bol) {
+							this.allCheck = true;
+						}
+					} else {
+						this.allCheck = false;
+					}
 				}
+				this.totalHondel();
 			},
 			//店家全选
 			storeAllCheck: function(item) {
@@ -234,16 +362,17 @@
 						if (bol) {
 							this.allCheck = true;
 						}
-						this.carListData[h].goodsList.forEach(item => {
+						this.carListData[h].commoditylist.forEach(item => {
 							item.flag = true;
 						})
 					} else {
 						this.allCheck = false;
-						this.carListData[h].goodsList.forEach(item => {
+						this.carListData[h].commoditylist.forEach(item => {
 							item.flag = false;
 						})
 					}
 				}
+				this.totalHondel();
 			},
 			// 全选
 			allChange: function() {
@@ -251,17 +380,74 @@
 				if (this.allCheck) {
 					this.carListData.map(item => {
 						item.storeCheckAll = true;
-						item.goodsList.map(item => {
+						item.commoditylist.map(item => {
 							item.flag = true;
 						})
 					})
 				} else {
 					this.carListData.map(item => {
 						item.storeCheckAll = false;
-						item.goodsList.map(item => {
+						item.commoditylist.map(item => {
 							item.flag = false;
 						})
 					})
+				}
+				this.totalHondel();
+			},
+			// 合计
+			totalHondel: function() {
+				let total = 0;
+				let goodsTotal = 0;
+				for (let i = 0; i < this.carListData.length; i++) {
+					for (let x = 0; x < this.carListData[i].commoditylist.length; x++) {
+						let flag = this.carListData[i].commoditylist[x].flag;
+						if (flag) {
+							let num = this.carListData[i].commoditylist[x].carNum;
+							let price = this.carListData[i].commoditylist[x].commodityArgVO.score;
+							total += num * price;
+							goodsTotal += Number(num);
+						}
+					}
+				}
+				this.total = total;
+				this.goodsTotal = goodsTotal;
+				uni.showLoading({
+					title: '加载中'
+				});
+				setTimeout(function() {
+					uni.hideLoading();
+				}, 500);
+			},
+			// 结算
+			settlement: function() {
+				let total = 0;
+				let goodsTotal = 0;
+				let arr = []
+				for (let i = 0; i < this.carListData.length; i++) {
+					for (let x = 0; x < this.carListData[i].commoditylist.length; x++) {
+						let flag = this.carListData[i].commoditylist[x].flag;
+						if (flag) {
+							arr.push(this.carListData[i].commoditylist[x].shopCarId)
+							let num = this.carListData[i].commoditylist[x].carNum;
+							let price = this.carListData[i].commoditylist[x].commodityArgVO.score;
+							total += num * price;
+							goodsTotal += num;
+						}
+					}
+				};
+				if(arr.length>0){
+					arr = arr.join(',')
+					uni.navigateTo({
+						url: "/pages/confirmOrder/index?goodsNum=" + goodsTotal + '&currentPage=car' + '&price=' + total +
+							'&shopCarIds=' + arr
+					})	
+				}else{
+					this.$refs.msgPopup.open({
+						type: 'warn',
+						content: '亲，您还没有选择商品哦！',
+						timeout: 3000,
+						isClick: false
+					});
 				}
 			}
 		}
@@ -382,7 +568,14 @@
 						justify-content: space-between;
 						border-top: 1rpx solid #f5f5f5;
 						position: relative;
-
+                        .cover{
+							position: absolute;
+							top: 0;
+							left: 0;
+							right: 0;
+							bottom: 0;
+							z-index: 1;
+						}
 						.goods-check {
 							position: relative;
 							top: 80rpx;
@@ -400,7 +593,7 @@
 								background-size: 26rpx 26rpx;
 								background-repeat: no-repeat;
 								background-position: 0 0;
-								z-index: 1;
+								z-index: 2;
 							}
 
 							.cover-active {
@@ -454,7 +647,7 @@
 								align-items: center;
 
 								.title {
-									font-size: 20rpx;
+									font-size: 26rpx;
 									color: #1a1a1a;
 									font-weight: bold;
 									margin-right: 17rpx;
@@ -464,7 +657,7 @@
 									background-color: #f1351b;
 									border-radius: 5rpx;
 									// padding: 3rpx;
-									font-size: 20rpx;
+									font-size: 26rpx;
 									color: #ffffff;
 								}
 							}
@@ -491,47 +684,51 @@
 									}
 								}
 
-								.num {
-									width: 132rpx;
-									display: flex;
-									align-items: center;
-
-									.reduse {
-										width: 44rpx;
-										height: 44rpx;
-										line-height: 44rpx;
-										background-color: #ffffff;
-										text-align: center;
-										font-size: 24rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-
-									input {
-										width: 44rpx;
-										height: 44rpx;
-										background-color: #f5f5f5;
-										border-radius: 5rpx;
-										text-align: center;
-										font-size: 20rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-
-									.add {
-										width: 44rpx;
-										height: 44rpx;
-										line-height: 44rpx;
-										background-color: #ffffff;
-										text-align: center;
-										font-size: 24rpx;
-										line-height: 40rpx;
-										letter-spacing: 0rpx;
-										color: #1a1a1a;
-									}
-								}
+							}
+						}
+						.num {
+							width: 132rpx;
+							display: flex;
+							align-items: center;
+							position: absolute;
+							right: 22rpx;
+							bottom: 0;
+							z-index: 2;
+						
+							.reduse {
+								width: 44rpx;
+								height: 44rpx;
+								line-height: 44rpx;
+								background-color: #ffffff;
+								text-align: center;
+								font-size: 30rpx;
+								line-height: 40rpx;
+								letter-spacing: 0rpx;
+								color: #1a1a1a;
+							}
+						
+							input {
+								width: 44rpx;
+								height: 44rpx;
+								background-color: #f5f5f5;
+								border-radius: 5rpx;
+								text-align: center;
+								font-size: 30rpx;
+								line-height: 40rpx;
+								letter-spacing: 0rpx;
+								color: #1a1a1a;
+							}
+						
+							.add {
+								width: 44rpx;
+								height: 44rpx;
+								line-height: 44rpx;
+								background-color: #ffffff;
+								text-align: center;
+								font-size: 30rpx;
+								line-height: 40rpx;
+								letter-spacing: 0rpx;
+								color: #1a1a1a;
 							}
 						}
 					}

@@ -4,7 +4,7 @@
 			<!-- 这里是状态栏 -->
 		</view>
 		<view class="herder">
-			<view class="top display-flex">
+			<view class="top dis-flex al-items-center">
 				<view class="previou" @click="backPage">
 					<image src="/static/images/goods-detail/previou.png" mode="widthFix"></image>
 				</view>
@@ -50,17 +50,19 @@
 		<view class="content">
 			<view class="goods-msg">
 				<view class="top">
-					<view class="title">{{goodsDetailData.commodityDescribe}}
+					<view class="title">{{goodsDetailData.commodityName}} {{goodsDetailData.commodityDescribe}}
 						<view class="goods-limited-num">
 							限量{{goodsDetailData.maxNumber}}套
 						</view>
 					</view>
+					<!-- #ifdef MP-WEIXIN -->
 					<view class="share" @click="shareOpen">
 						<image src="/static/images/goods-detail/share.png" mode="widthFix"></image>
 					</view>
+					<!--  #endif -->
 				</view>
-				<view class="middle display-flex">
-					<view class="integral display-flex">
+				<view class="middle dis-flex al-items-center">
+					<view class="integral dis-flex">
 						<view class="integral-icon">
 							<image src="/static/images/goods-detail/integral-icon.png" mode="widthFix"></image>
 						</view>
@@ -83,7 +85,7 @@
 
 							</view>
 						</view>
-						<view class="progress-act">
+						<view class="progress-act" :style="'width:'+proportion">
 
 						</view>
 					</view>
@@ -109,17 +111,16 @@
 						<view class="name">店铺</view>
 					</view>
 				</navigator>
-				<navigator url="" hover-class="none">
-					<view class="service block">
-						<view class="service-icon block-icon">
-							<image src="/static/images/goods-detail/service.png" mode="widthFix"></image>
-						</view>
-						<view class="name">客服</view>
+				<view class="service block">
+					<view class="cover" @click="service"></view>
+					<view class="service-icon block-icon">
+						<image src="/static/images/goods-detail/service.png" mode="widthFix"></image>
 					</view>
-				</navigator>
+					<view class="name">客服</view>
+				</view>
 				<navigator url="/pages/car/index" hover-class="none">
 					<view class="car block">
-						<view class="round">0</view>
+						<view class="round">{{carNum}}</view>
 						<view class="car-icon block-icon">
 							<image src="/static/images/goods-detail/car.png" mode="widthFix"></image>
 						</view>
@@ -144,14 +145,14 @@
 				</view>
 				<view class="goods-msg">
 					<view class="goods-icon">
-						<image src="/static/images/goods-detail/goods-icon.png" mode="widthFix"></image>
+						<image :src="imageUrl+argModel.imgUrl" mode="widthFix"></image>
 					</view>
 					<view class="exchange-msg">
 						<view class="integral">
-							<text>6000</text><text>积分</text>
+							<text>{{argModel.score}}</text><text>积分</text>
 						</view>
 						<view class="title">
-							绿恒源 全棉印花四件套 HYX-020TJ 绿罗伊
+							{{goodsDetailData.commodityName}} {{choseModel}}
 						</view>
 					</view>
 				</view>
@@ -173,7 +174,7 @@
 						</view>
 						<view class="num-change">
 							<view class="reduce" @click="goodsNumReduce">-</view>
-							<input type="text" :value="goodsNum" />
+							<input type="text" :value="goodsNum" @input="onInput"/>
 							<view class="add" @click="goodsNumAdd">+</view>
 						</view>
 					</view>
@@ -225,13 +226,13 @@
 
 <script>
 	import mpopup from 'components/xuan-popup/xuan-popup.vue';
-	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	export default {
 		components: {
 			mpopup
 		},
 		data() {
 			return {
+				carNum: "",
 				navList: false,
 				goodsDetailData: {},
 				bannerList: [],
@@ -241,7 +242,12 @@
 				goods_spec_arr: [],
 				goodsNum: 1,
 				goodsId: "",
-				updata: true
+				updata: true,
+				choseDetailData: [], //选择的容器
+				argModel: {}, //规格对象
+				choseModel: "",
+				totalCarNum: 0,
+				proportion: ""
 			}
 		},
 		onLoad(option) {
@@ -249,7 +255,7 @@
 				this.imageUrl = this.$url.imageUrl;
 			})
 			this.goodsId = option.id;
-			this.getDetailData(option.id)
+			this.initDetailData(option.id)
 		},
 		methods: {
 			// 返回上一页
@@ -262,10 +268,14 @@
 			},
 			// 底部窗口
 			openPopup: function(type) {
-				this.$refs.exchangePopup.open();
-				this.selType = type;
-				this.getGoodsModel();
-
+				let userid = uni.getStorageSync('wxUserInfo');
+				// if (userid.id) {
+				    this.$refs.exchangePopup.open();
+				    this.selType = type;
+				    this.getGoodsModel();	
+				// }else{
+				// 	window.location.href = "http://lipinhui.28888753.cn/before/users/getUserCode";
+				// }
 			},
 			closePopup: function() {
 				this.$refs.exchangePopup.close()
@@ -278,38 +288,34 @@
 				this.$refs.popup.close()
 			},
 			// 获取详情数据
-			getDetailData: function(id) {
+			initDetailData: function(id) {
 				const that = this;
-				this.$http("/commodity/getCommodity", {
+				let userid = uni.getStorageSync('wxUserInfo');
+				that.$http("/commodity/getCommodity", {
+					userid:userid.id,
 					id: id
 				}, "post").then(function(res) {
 					console.log(res);
 					if (res.data.status == "success") {
 						that.goodsDetailData = res.data.commodityById;
+						// 计算占比
+						let num = that.goodsDetailData.salnum;
+						let total = that.goodsDetailData.salnum + that.goodsDetailData.leftNum;
+						that.proportion = that.getPercent(num, total);
 						// 轮播
 						that.bannerList = res.data.commodityById.imglist;
+						that.carNum = res.data.carnum
 					}
 				})
 			},
-			// 属性切换
-			atrChage: function(event) {
-				let itemindex = event.currentTarget.dataset.itemindex,
-					attrindex = event.currentTarget.dataset.attrindex,
-					goodsModul = this.goodsModul;
-				for (let i in goodsModul) {
-					for (let j in goodsModul[i].childrenlist) {
-						if (itemindex == i) {
-							goodsModul[i].childrenlist[j].checked = false;
-							if (attrindex == j) {
-								goodsModul[i].childrenlist[attrindex].checked = true;
-								this.goods_spec_arr[i] = goodsModul[i].childrenlist[attrindex].belongModelId;
-							}
-						}
-					}
+			// 计算百分比
+			getPercent: function(num, total) {
+				num = parseFloat(num);
+				total = parseFloat(total);
+				if (isNaN(num) || isNaN(total)) {
+					return "-";
 				}
-				this.updata = false;
-				this.updata = true;
-				this.goodsModul = goodsModul;
+				return total <= 0 ? "0%" : Math.round((num / total) * 10000) / 100.0 + "%";
 			},
 			// 商品数量减少
 			goodsNumReduce: function() {
@@ -328,7 +334,7 @@
 			goodsNumAdd: function() {
 				++this.goodsNum
 			},
-			// 商品型号
+			// 商品属性
 			getGoodsModel: function() {
 				const that = this;
 				this.$http("/commodity/getCommodityModel", {
@@ -337,44 +343,144 @@
 					console.log("商品型号", res);
 					if (res.data.status == "success") {
 						that.goodsModul = res.data.modelList;
+						that.choseDetailData = res.data.modelList; //缓存
 						// 商品属性初始化
 						for (let i in that.goodsModul) {
-							for (let j in that.goodsModul[i].childrenlist) {
+							if (i > 0) {
+								that.choseDetailData[i].childrenlist = that.goodsModul[0].childrenlist[0].childrenlist
+							}
+							if (i > 1) {
+								that.choseDetailData[i].childrenlist = that.choseDetailData[i - 1].childrenlist[0].childrenlist;
+							}
+							for (let j in that.choseDetailData[i].childrenlist) {
 								if (j < 1) {
-									that.goodsModul[i].childrenlist[0].checked = true;
-									that.goods_spec_arr[i] = that.goodsModul[i].childrenlist[0].belongModelId;
+									that.choseDetailData[i].childrenlist[0].checked = true;
+									that.goods_spec_arr[i] = that.choseDetailData[i].childrenlist[0].id;
 								}
 							}
+							that.choseModel += that.choseDetailData[i].childrenlist[0].modelName;
 						}
+						that.argModel = JSON.parse(JSON.stringify(that.choseDetailData[(that.goodsModul.length - 1)].childrenlist[0].commodityArgVO));
+						console.log(that.choseDetailData);
+						console.log(that.argModel);
 					}
 				})
 			},
+			// 属性切换
+			atrChage: function(event) {
+				let itemindex = parseInt(event.currentTarget.dataset.itemindex), //父循环下标
+					attrindex = parseInt(event.currentTarget.dataset.attrindex), //子循环下标
+					choseDetailData = this.choseDetailData;
+				for (let i in choseDetailData) {
+					if ((i - 1) == itemindex) { //如果是下一级
+						choseDetailData[itemindex + 1].childrenlist = choseDetailData[i - 1].childrenlist[attrindex].childrenlist;
+					} else if (i > itemindex) { //如果选择下标大于父循环下标	
+						choseDetailData[i].childrenlist = choseDetailData[i - 1].childrenlist[0].childrenlist;
+					}
+					for (let j in choseDetailData[i].childrenlist) {
+						if (itemindex == i) {
+							choseDetailData[i].childrenlist[j].checked = false;
+							if (attrindex == j) {
+								choseDetailData[i].childrenlist[attrindex].checked = true;
+							}
+						}
+						if (i > itemindex) {
+							choseDetailData[i].childrenlist[j].checked = false;
+						}
+						if (choseDetailData[i].childrenlist[j].checked == true) {
+							this.goods_spec_arr[i] = choseDetailData[i].childrenlist[j].id;
+						}
+					}
+					if (i > itemindex) {
+						choseDetailData[i].childrenlist[0].checked = true;
+					}
+
+				}
+				this.updata = false;
+				this.updata = true;
+				this.choseModel = "";
+				this.choseDetailData = choseDetailData;
+				//获取型号
+				for (let i in this.choseDetailData) {
+					for (let j in this.choseDetailData[i].childrenlist) {
+						if (this.choseDetailData[i].childrenlist[j].checked == true) {
+							this.choseModel += this.choseDetailData[i].childrenlist[j].modelName + " ";
+							//判断为最后一个
+							if ((parseInt(i) + 1) >= this.choseDetailData.length) {
+								this.argModel = JSON.parse(JSON.stringify(this.choseDetailData[i].childrenlist[j].commodityArgVO)); //赋值到模型对象
+							}
+						}
+					}
+				}
+				console.log(this.argModel);
+			},
+			//input监听
+			onInput:function(e){
+				this.goodsNum = Number(e.target.value)
+			},
 			// 确定按钮
 			confirmGoods: function() {
-				console.log(this.$refs.tabItem);
-				let tabItem = this.$refs.tabItem;
-				let modelId = Number(tabItem.pop().$el.dataset.id);
-				console.log(modelId)
 				const that = this;
+				let userid = uni.getStorageSync('wxUserInfo');
 				switch (this.selType) {
 					case "addCar":
 						this.$http("/commodity/saveShopCar", {
+							belongUserId: userid.id,
 							belongCommodityId: that.goodsDetailData.id,
-							belongArgId: modelId,
+							belongArgId: that.argModel.id,
 							belongSupperId: that.goodsDetailData.commoditySupplier,
-							carNum: that.goodsNum
+							costPrice: that.argModel.score,
+							carNum: that.goodsNum,
+							comNum:that.goodsDetailData.maxNumber
 						}, "post").then(function(res) {
-							console.log("加入购物车", res)
+							console.log("res=>", res)
+							if (res.statusCode == 200) {
+								if(res.data.status=="ismax"){
+									that.$refs.msgPopup.open({
+										type: 'err',
+										content: '亲，您超出兑换的最大数量了哦！',
+										timeout: 3000,
+										isClick: false
+									});
+								}else{
+								    that.closePopup();
+								    that.initDetailData(that.goodsId);
+								    that.$refs.msgPopup.open({
+								    	type: 'success',
+								    	content: '亲，加入购物车哦！',
+								    	timeout: 3000,
+								    	isClick: false
+								    });	
+								}
+							}
 						})
 						break;
 					case "exchange":
+						that.closePopup();
 						uni.navigateTo({
-							url: "/pages/confirmOrder/index?goodsNum=" + that.goodsNum + '&modelId=' + modelId + '&goodsId=' + that.goodsId
+							url: "/pages/confirmOrder/index?goodsNum=" + that.goodsNum + '&modelId=' + that.argModel.id + '&goodsId=' +
+								that.goodsId + '&currentPage=goodsDetail' + '&price=' + that.argModel.score
 						})
 						break;
 					default:
 						throw new Error("confirm event error")
 				}
+			},
+			// 客服
+			service: function() {
+				uni.showModal({
+					title: '客服电话',
+					content: '18820854754',
+					showCancel: false,
+					confirmText: "取消",
+					success: function(res) {
+						if (res.confirm) {
+							console.log('用户点击确定');
+						} else if (res.cancel) {
+							console.log('用户点击取消');
+						}
+					}
+				});
 			}
 		}
 	}
@@ -470,7 +576,6 @@
 		}
 
 		.content {
-
 			.goods-msg {
 				box-sizing: border-box;
 				width: 100%;
@@ -482,7 +587,8 @@
 					justify-content: space-between;
 
 					.title {
-						width: 545rpx;
+						// width: 545rpx;
+						width: 100%;
 						font-size: 40rpx;
 						line-height: 52rpx;
 						letter-spacing: 0rpx;
@@ -507,7 +613,7 @@
 					.share {
 						width: 42rpx;
 						height: 40rpx;
-						margin-top: 4rpx;
+						margin-top: 10rpx;
 
 						image {
 							display: block;
@@ -651,6 +757,17 @@
 				justify-content: space-between;
 
 				.block {
+					position: relative;
+
+					.cover {
+						position: absolute;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						z-index: 1;
+					}
+
 					.block-icon {
 						width: 50rpx;
 						height: 50rpx;
@@ -774,7 +891,6 @@
 				margin-top: 33rpx;
 				font-size: 30rpx;
 			}
-
 		}
 
 		.exchangeWarpper {
