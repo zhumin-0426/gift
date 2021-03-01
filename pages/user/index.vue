@@ -60,7 +60,7 @@
 						</block>
 					</view>
 					<view class="coupon">
-						<view class="cover" data-pageurl="card" :data-idx="index+1" @click="onTargetJump"></view>
+						<view class="cover" data-pageurl="card" @click="onTargetJump"></view>
 						<block v-if="userid!=''">
 							<view class="num">
 								{{couponCount}}
@@ -373,7 +373,7 @@
 				let userid = uni.getStorageSync('wxUserInfo');
 				this.userid = userid.id;
 				that.$http('/users/getUserCenter', {
-					id: userid.id
+					id: 4
 				}, 'post').then(function(res) {
 					console.log("个人中心", res);
 					if (res.data.status == "success") {

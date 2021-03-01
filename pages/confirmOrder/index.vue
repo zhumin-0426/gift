@@ -160,7 +160,8 @@
 				price: "",
 				orderids: "",
 				isHasAddress:"",
-				countCouponRecord:""
+				countCouponRecord:"",
+				ordernumber:""
 			}
 		},
 		onLoad(options) {
@@ -426,6 +427,7 @@
 				    				break;
 				    			default:
 				    				that.orderids = res.data.orderids;
+									that.ordernumber = res.data.ordernumber;
 				    				that.$refs.popup.open()
 				    		}
 				    	}
@@ -440,6 +442,9 @@
 				}
 			},
 			close(done) {
+				uni.redirectTo({
+					url:"/pages/order/index?id=1"
+				})
 				done()
 			},
 			confirm(done) {
@@ -447,6 +452,7 @@
 				let userid = uni.getStorageSync('wxUserInfo');
 				// 确认订单
 				let data = {
+					orderNumber:that.ordernumber,
 					orderids: that.orderids,
 					orderBelongUserid: userid.id,
 					orderPayMoney: that.totalPrice - that.cardPrice

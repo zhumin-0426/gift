@@ -292,7 +292,7 @@
 				const that = this;
 				let userid = uni.getStorageSync('wxUserInfo');
 				that.$http("/commodity/getCommodity", {
-					userid:userid.id,
+					userid:4,
 					id: id
 				}, "post").then(function(res) {
 					console.log(res);

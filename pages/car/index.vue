@@ -153,10 +153,12 @@
 			}
 		},
 		onLoad() {
-			this.initCarData();
 			this.$nextTick(function() {
 				this.imageUrl = this.$url.imageUrl;
 			});
+		},
+		onShow() {
+			this.initCarData();
 		},
 		methods: {
 			// 数据初始化

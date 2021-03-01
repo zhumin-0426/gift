@@ -64,27 +64,24 @@
 											<view class="num fon-28 col-aea">数量：{{goodsItem.detailNumber}}</view>
 										</view>
 									</view>
-									<block v-if="currentVal==1">
-										<view class="btn" :data-idx="index" @click="exchange">
-										  立即兑换	
-										</view>
-									</block>
-									<block v-else-if="currentVal==2">
-										
-									</block>
-									<block v-else-if="currentVal==3">
-										<view class="btn" :data-orderId="item.id" @click="confirmGetGoods">
-										  确认收货
-										</view>
-									</block>
-									<block v-else-if="currentVal==4">
-										<view :data-img="goodsItem.detailPic" :data-orderId="item.id" :data-id="goodsItem.commodityVO.id" class="btn" @click="jumpEvaluate">
+									<block v-if="currentVal==4">
+										<view :data-img="goodsItem.detailPic" :data-orderdetailId="goodsItem.id" :data-orderId="item.id" :data-id="goodsItem.commodityVO.id" class="btn" @click="jumpEvaluate">
 										  立即评价
 										</view>
 									</block>
 								</block>
 			    			</view>
 			    		</block>
+						<block v-if="currentVal==1">
+							<view class="btn" :data-idx="index" @click="exchange">
+							  立即兑换	
+							</view>
+						</block>
+						<block v-if="currentVal==3">
+							<view class="btn" :data-orderId="item.id" @click="confirmGetGoods">
+							  确认收货
+							</view>
+						</block>
 			    	</view>
 			    </block>
 			</block>
@@ -213,6 +210,7 @@
 				let idx = that.idx;
 				let prams = {
 					orderids:that.orderList[idx].id,
+					orderNumber:that.orderList[idx].orderNumber,
 					orderBelongUserid:userid.id,
 					orderPayMoney:that.orderList[idx].orderPayMoney,
 					orderdetallist:that.orderList[idx].orderdetallist
@@ -233,23 +231,24 @@
 				done()
 			},
 			tabChange:function(e){
-				let id = e.target.dataset.id;
+				const id = e.target.dataset.id;
 				console.log("id",id)
 				this.currentVal = Number(id)+1;
 				this.orderDataInit()
 			},
 			jumpOrderDel:function(e){
-				let id = e.target.dataset.id;
+				const id = e.target.dataset.id;
 				uni.navigateTo({
 					url:"/pages/order/orderDetail?id="+id
 				})
 			},
 			jumpEvaluate:function(e){
-				let id =  e.target.dataset.id;
-				let orderid = e.target.dataset.orderid;
-				let img = e.target.dataset.img;
+				const id =  e.target.dataset.id;
+				const orderid = e.target.dataset.orderId;
+				const img = e.target.dataset.img;
+				const orderdetailId = e.target.dataset.orderdetailId
 				uni.navigateTo({
-					url:'/pages/evaluate/index?id='+id+'&orderid='+orderid+'&img='+img
+					url:'/pages/evaluate/index?id='+id+'&orderid='+orderid+'&img='+img+'&orderdetailId='+orderdetailId
 				})
 			},
 			// 监听导航返回按钮
@@ -306,6 +305,8 @@
 				background-color: #fff;
 				border-radius: 15rpx;
 				margin-bottom: 32rpx;
+				overflow: hidden;
+				padding-bottom: 22rpx;
 
 				.order-item {
 					box-sizing: border-box;
@@ -398,6 +399,15 @@
 
 				.order-item:first-child .goods:first-child {
 					border: none;
+				}
+				.btn {
+					float: right;
+					border: solid 1rpx rgb(255, 80, 0);
+					font-size: 28rpx;
+					color: rgb(255, 80, 0);
+					padding: 5rpx 10rpx;
+					border-radius: 30rpx;
+					margin-right: 22rpx;
 				}
 			}
 		}

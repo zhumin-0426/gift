@@ -35,7 +35,8 @@
 				ceshi1: 1,
 				cashTxt:"差",
 				txtVal:"",
-				ceshiData1:[]
+				ceshiData1:[],
+				orderdetailId:""
 			}
 		},
 		components: {
@@ -46,6 +47,7 @@
 			this.goodsId = options.id;
 			this.orderId = options.orderid;
 			this.goodsImg = options.img;
+			this.orderdetailId = options.orderdetailId;
 			this.$nextTick(function() {
 				this.imageUrl = this.$url.imageUrl;
 			})
@@ -101,7 +103,8 @@
 					belongComId:Number(that.goodsId),
 					belongOrderId :Number(that.orderId),
 					belongUserid :userid.id,
-					commentContent:that.txtVal
+					commentContent:that.txtVal,
+					orderdetailId:Number(that.orderdetailId)
 				}
 				that.$http('/order/saveOrderComment',prams,'post').then(function(res){
 					if(res.statusCode==200){

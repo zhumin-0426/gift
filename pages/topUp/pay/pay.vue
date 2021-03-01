@@ -313,7 +313,7 @@
 					background-size: 44rpx 44rpx;
 					background-position: 31rpx 24rpx;
 					background-repeat: no-repeat;
-					background-color: #f4f4f4;
+					background-color: #f1f1f1;
 					box-shadow: 0rpx 9rpx 19.1rpx 1.9rpx rgba(93, 93, 93, 0.2);
 					position: relative;
 .icon{

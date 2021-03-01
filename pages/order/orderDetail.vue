@@ -5,29 +5,31 @@
 				<view class="name fon-28 col-1a1 mg-r-22">{{addressMsg.orderUserName}}</view>
 				<view class="phone fon-24 col-afa">{{addressMsg.orderUserPhone}}</view>
 			</view>
-			<view class="address-del fon-12 col-1a1 dis-flex al-items-center jf-bw">
+			<view class="address-del fon-24 col-1a1 dis-flex al-items-center jf-bw">
 				<view>{{addressMsg.orderProvinct}} {{addressMsg.orderCity}} {{addressMsg.orderArea}} {{addressMsg.orderAddress}}</view>
 			</view>
 		</view>
 		<!-- 订单 -->
 		<view class="order bg-fff w100 bd-r-14 w100 box-sz mg-b-24">
-			<view class="top">
-				<image :src="imageUrl+addressMsg.logo" mode="widthFix"></image>
-			</view>
 			<block v-for="(item,index) in orderMsg" :key="index">
-				<view class="goods dis-flex al-items-center jf-bw w100">
-					<view class="goods-icon">
-						<image class="w100 bd-r-14" :src="imageUrl+item.detailPic" mode="widthFix"></image>
-					</view>
-					<view class="goods-msg">
-						<view class="goods-name fon-28 txt-clamp-2">
-							{{item.detailName}} {{item.detailArgName}}
-						</view>
-						<view class="goods-num fon-20 col-afa">
-							x{{item.detailNumber}}
-						</view>
-					</view>
+				<view class="top">
+					<image :src="imageUrl+item.supplierShowPic" mode="widthFix"></image>
 				</view>
+				<block v-for="(goodsItem,goodsIndex) in item.orderdetallist" key="goods">
+					<view class="goods dis-flex al-items-center jf-bw w100">
+						<view class="goods-icon">
+							<image class="w100 bd-r-14" :src="imageUrl+goodsItem.detailPic" mode="widthFix"></image>
+						</view>
+						<view class="goods-msg">
+							<view class="goods-name fon-28 txt-clamp-2">
+								{{goodsItem.detailName}} {{goodsItem.detailArgName}}
+							</view>
+							<view class="goods-num fon-24 col-afa">
+								x{{goodsItem.detailNumber}}
+							</view>
+						</view>
+					</view>
+				</block>
 			</block>
 			<view class="pay-info fon-28 col-1a1 fon-w-b">
 				<view class="integral dis-flex al-items-center jf-bw">
@@ -55,8 +57,8 @@
 					<view>
 						优惠活动
 					</view>
-					<view class="col-f13">
-						<block v-if="addressMsg.orderFreeMoney==0">
+					<view :class="addressMsg.orderFreeMoney!=null?'col-f13':''">
+						<block v-if="addressMsg.orderFreeMoney==null">
 						    暂无优惠活动
 						</block>
 						<block v-else>
@@ -116,7 +118,7 @@
 					console.log("订单详情数据初始化",res)
 					if(res.statusCode==200){
 						that.addressMsg = res.data.commodityOrderById;
-						that.orderMsg = res.data.commodityOrderById.orderdetallist;
+						that.orderMsg = res.data.commodityOrderById.supplierlist;
 					}
 				})
 			}
@@ -148,7 +150,8 @@
 			margin-bottom: 32rpx;
 
 			image {
-				width: 280rpx
+				width: 280rpx;
+				height: 44rpx!important;
 			}
 		}
 

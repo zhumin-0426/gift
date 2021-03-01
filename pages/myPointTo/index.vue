@@ -5,7 +5,7 @@
 			<block v-if="businessLogo!=[]">
 				<view class="focus-state-module">
 					<view class="title">
-						我关注的品牌
+						我关注的平台
 					</view>
 					<view class="main">
 						<view class="brand">

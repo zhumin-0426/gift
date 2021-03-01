@@ -96,7 +96,7 @@
 								<text class="fon-24 col-ff8 txt-clamp-1">{{goodsItem.defaultScore}}积分</text>
 							</view>
 							<view class="right fon-24 col-aea txt-clamp-1">
-								{{goodsItem.salnum}}人已兑换
+								已兑换{{goodsItem.salnum}}人
 							</view>
 						</view>
 					</view>

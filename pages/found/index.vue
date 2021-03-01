@@ -23,7 +23,7 @@
 			<view :class="dynamic==true?'focus-state-module-active':'focus-state-module'">
 				<block v-if="foundBusiness.length>0">
 					<view class="title">
-						发现你关注的品牌更新了动态哦 !
+						发现你关注的平台更新了动态哦 !
 					</view>
 					<view class="main">
 						<view class="brand">
