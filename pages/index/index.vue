@@ -23,12 +23,14 @@
 			</view>
 			<!-- 轮播 -->
 			<view class="swipe-warpper">
-				<swiper class="swiper" indicator-dots="true" circular="true" autoplay="true" interval="2000" duration="500"
-				 indicator-color="#f7f7f7" indicator-active-color="#ff0000">
+				<swiper class="swiper" indicator-dots="true" circular="true" autoplay="true" interval="2000"
+					duration="500" indicator-color="#f7f7f7" indicator-active-color="#ff0000">
 					<swiper-item>
 						<block v-for="(bannerItem,bannerIndex) in bannerList" :key="bannerIndex">
-							<view class="swiper-item" @click="jumpGoodsDel" :data-id="bannerItem.bannerBelongCommodityId">
-								<image style="width: 100%;" :src="imageUrl+bannerItem.bannerPic" mode="widthFix"></image>
+							<view class="swiper-item" @click="jumpGoodsDel"
+								:data-id="bannerItem.bannerBelongCommodityId">
+								<image style="width: 100%;" :src="imageUrl+bannerItem.bannerPic" mode="widthFix">
+								</image>
 							</view>
 						</block>
 					</swiper-item>
@@ -49,12 +51,16 @@
 			</view>
 			<!-- 信息栏 -->
 			<view class="tig-bar box-sz pd-l-22 pd-r-22 bd-r-42 dis-flex al-items-center jf-bw">
-				<uni-notice-bar :speed="50" style="width: 100%;height: 100%;padding: 0;margin: 0;" background-color="transparent" color="#fff" moreColor="#ff415a" scrollable="true" showIcon="true" :showGetMore="true" moreText="更多" single="true" :text="systemMsg.msgTitle" @getmore="getmore"></uni-notice-bar>
+				<uni-notice-bar :speed="50" style="width: 100%;height: 100%;padding: 0;margin: 0;"
+					background-color="transparent" color="#fff" moreColor="#ff415a" scrollable="true" showIcon="true"
+					:showGetMore="true" moreText="更多" single="true" :text="systemMsg.msgTitle" @getmore="getmore">
+				</uni-notice-bar>
 			</view>
 			<!-- 热门推荐 -->
 			<view class="goods-bar w100 dis-flex al-items-center jf-bw mg-t-70 mg-b-28">
-				<view class="goods-bar-item bg-fff bd-r-14" v-for="(recommendGoodsItem,recommendGoodsIndex) in recommendGoods" :key="recommendGoodsIndex"
-				 @click="jumpGoodsDel($event)" :data-id="recommendGoodsItem.id">
+				<view class="goods-bar-item bg-fff bd-r-14"
+					v-for="(recommendGoodsItem,recommendGoodsIndex) in recommendGoods" :key="recommendGoodsIndex"
+					@click="jumpGoodsDel($event)" :data-id="recommendGoodsItem.id">
 					<image class="w100 ds-b" :src="imageUrl+recommendGoodsItem.recommendPic" mode="widthFix"></image>
 				</view>
 			</view>
@@ -71,28 +77,30 @@
 			<!-- 商品列表 -->
 			<view class="goods-list">
 				<view class="tab w100 dis-flex flx-w jf-bw">
-					<view @click="changeTabObj(item.id)" :class="item.id==currentTabObj?'tab-item-active':'tab-item'" v-for="(item,index) in goodsListTab"
-					 :key="index">
+					<view @click="changeTabObj(item.id)" :class="item.id==currentTabObj?'tab-item-active':'tab-item'"
+						v-for="(item,index) in goodsListTab" :key="index">
 						<view class="tab-item-title">{{item.title}}</view>
 						<view class="tab-item-prompt">{{item.titleDesc}}</view>
 						<view class="tab-item-line"></view>
 					</view>
 				</view>
 				<view class="tab-change-obj w100 mg-t-30 mg-b-16 dis-flex flx-w jf-bw">
-					<view class="goods box-sz fl-hd bg-fff bd-r-14 mg-b-22" :data-id="goodsItem.id" @click="jumpGoodsDel"
-					 v-for="(goodsItem,goodsIndex) in goodsListObj" :key="goodsIndex">
+					<view class="goods box-sz fl-hd bg-fff bd-r-14 mg-b-22" :data-id="goodsItem.id"
+						@click="jumpGoodsDel" v-for="(goodsItem,goodsIndex) in goodsListObj" :key="goodsIndex">
 						<view class="goods-pic">
 							<image class="ds-b" :src="imageUrl+goodsItem.imgUrl" mode="widthFix"></image>
 						</view>
 						<view class="goods-title pd-t-22 pd-r-22 pd-b-22 pd-l-22 fon-24 txt-justify txt-clamp-2">
 							{{goodsItem.commodityName}}
 						</view>
-						<view class="exchange-btn fl-l pd-b-2 pd-t-2 pd-l-4 pd-r-4 mg-b-22 mg-l-22 bg-fff bd-r-4 fon-28 col-e61 txt-center">
+						<view
+							class="exchange-btn fl-l pd-b-2 pd-t-2 pd-l-4 pd-r-4 mg-b-22 mg-l-22 bg-fff bd-r-4 fon-28 col-e61 txt-center">
 							热门兑换
 						</view>
 						<view class="goods-msg box-sz w100 pd-b-22 pd-l-22 pd-r-22 dis-flex al-items-center jf-bw">
 							<view class="left dis-flex al-items-center">
-								<image class="mg-r-10" src="/static/images/index/integral-icon.png" mode="widthFix"></image>
+								<image class="mg-r-10" src="/static/images/index/integral-icon.png" mode="widthFix">
+								</image>
 								<text class="fon-24 col-ff8 txt-clamp-1">{{goodsItem.defaultScore}}积分</text>
 							</view>
 							<view class="right fon-24 col-aea txt-clamp-1">
@@ -133,9 +141,9 @@
 				goodsListObj: [],
 				goodsListid: 0,
 				// 广告
-				advList:[],
+				advList: [],
 				// 系统消息
-				systemMsg:"",
+				systemMsg: "",
 				// 底部导航
 				tabBarActive: {
 					state: 1,
@@ -147,7 +155,7 @@
 				interval: 2000,
 				duration: 500,
 				// 获取头像
-				userpic:""
+				userpic: ""
 			}
 		},
 		onLoad(options) {
@@ -160,27 +168,27 @@
 		},
 		methods: {
 			//授权登录
-			login:function(options){
+			login: function(options) {
 				const that = this;
-				this.$http("/users/saveUsers",{
-					"code":options.code
-				},"post").then(function(res){
-					if(res.data.status=="success"){
+				this.$http("/users/saveUsers", {
+					"code": options.code
+				}, "post").then(function(res) {
+					if (res.data.status == "success") {
 						let obj = {
-							id:res.data.getuser.id,
-							userpic:res.data.getuser.wxHeadPortrait
+							id: res.data.getuser.id,
+							userpic: res.data.getuser.wxHeadPortrait
 						}
 						uni.setStorage({
-							key:"wxUserInfo",
-							data:obj
+							key: "wxUserInfo",
+							data: obj
 						})
 					}
-				}) 
+				})
 			},
 			// 首页数据
 			initIndexData: function() {
 				const that = this;
-				that.userpic =  uni.getStorageSync('wxUserInfo');
+				that.userpic = uni.getStorageSync('wxUserInfo');
 				that.$http("/index/getIndexList", {}, "post").then(function(res) {
 					if (res.statusCode == 200) {
 						console.log("首页数据请求", res);
@@ -195,7 +203,7 @@
 						// 广告
 						that.advList = res.data.indexList.saleslist;
 						// 系统消息
-						that.systemMsg =  res.data.indexList.msglist[0];
+						that.systemMsg = res.data.indexList.msglist[0];
 					}
 				})
 			},
@@ -230,9 +238,9 @@
 				})
 			},
 			// 系统信息
-			getmore:function(){
+			getmore: function() {
 				uni.navigateTo({
-					url:'/pages/notice/index'
+					url: '/pages/notice/index'
 				})
 			}
 		}
@@ -314,7 +322,7 @@
 
 				image {
 					width: 100%;
-					height: 100%!important;
+					height: 100% !important;
 					border-radius: 50%;
 				}
 			}
@@ -323,12 +331,14 @@
 				width: 706rpx;
 				height: 284rpx;
 				margin: 0 auto;
-				.swiper-item{
+
+				.swiper-item {
 					width: 100%;
 					height: 100%;
-					image{
+
+					image {
 						width: 100%;
-						height: 100%!important;
+						height: 100% !important;
 						border-radius: 30rpx;
 					}
 				}
@@ -358,10 +368,10 @@
 				width: 706rpx;
 				height: 86rpx;
 				background-image: linear-gradient(90deg,
-					#ff3f5a 0%,
-					#ff8e66 66%),
+						#ff3f5a 0%,
+						#ff8e66 66%),
 					linear-gradient(#ffffff,
-					#ffffff);
+						#ffffff);
 				background-blend-mode: normal,
 					normal;
 				box-shadow: inset 0rpx 38rpx 0rpx 0rpx rgba(255, 255, 255, 0.25);
@@ -398,17 +408,21 @@
 				width: 225rpx;
 				height: 349rpx;
 			}
-             .adversing{
-				 height: 210rpx;
-				 .swiper{
-				 	width: 100%;
-				 	height: 100%;
-				 	image{
-				 		width: 100%;
-				 		height: 100%!important;
-				 	}
-				 }
-			 }
+
+			.adversing {
+				height: 210rpx;
+
+				.swiper {
+					width: 100%;
+					height: 100%;
+
+					image {
+						width: 100%;
+						height: 100% !important;
+					}
+				}
+			}
+
 			.goods-list {
 				width: 100%;
 

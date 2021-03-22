@@ -168,7 +168,16 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/service/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "客服",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "礼品汇",
