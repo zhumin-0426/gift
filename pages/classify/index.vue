@@ -92,15 +92,15 @@
 				</view>
 			</view>
 		</view>
-		<tabBar :tabBarActive="tabBarActive"></tabBar>
+		<!-- <tabBar :tabBarActive="tabBarActive"></tabBar> -->
 	</view>
 </template>
 
 <script>
-	import tabBar from '../../components/footer.vue'
+	// import tabBar from '../../components/footer.vue'
 	export default {
 		components: {
-			tabBar
+			// tabBar
 		},
 		data() {
 			return {

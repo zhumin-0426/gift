@@ -332,18 +332,18 @@
 		<!-- 消息提示 -->
 		<mpopup ref="msgPopup" :isdistance="true"></mpopup>
 		<!-- 底部导航 -->
-		<tabBar :tabBarActive="tabBarActive"></tabBar>
+		<!-- <tabBar :tabBarActive="tabBarActive"></tabBar> -->
 	</view>
 </template>
 
 <script>
 	import uniPopup from '@/components/uni-popup/uni-popup.vue';
 	import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue';
-	import tabBar from '../../components/footer.vue';
+	// import tabBar from '../../components/footer.vue';
 	import mpopup from 'components/xuan-popup/xuan-popup.vue';
 	export default {
 		components: {
-			tabBar,
+			// tabBar,
 			mpopup,
 			uniPopup,
 			uniPopupDialog,

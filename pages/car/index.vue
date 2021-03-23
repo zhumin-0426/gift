@@ -117,16 +117,16 @@
 		<!-- 消息提示 -->
 		<mpopup ref="msgPopup" :isdistance="true"></mpopup>
 		<!-- 底部导航 -->
-		<tabBar :tabBarActive="tabBarActive"></tabBar>
+		<!-- <tabBar :tabBarActive="tabBarActive"></tabBar> -->
 	</view>
 </template>
 
 <script>
-	import tabBar from '../../components/footer.vue';
+	// import tabBar from '../../components/footer.vue';
 	import mpopup from 'components/xuan-popup/xuan-popup.vue';
 	export default {
 		components: {
-			tabBar,
+			// tabBar,
 			mpopup
 		},
 		data() {
@@ -747,7 +747,7 @@
 			width: 100%;
 			position: fixed;
 			left: 0;
-			bottom: 108rpx;
+			bottom: 100rpx;
 			background-color: #fff;
 			display: flex;
 			align-items: center;

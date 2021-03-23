@@ -112,16 +112,16 @@
 			</view>
 		</view>
 		<!-- 底部导航栏 -->
-		<tabBar :tabBarActive="tabBarActive"></tabBar>
+		<!-- <tabBar :tabBarActive="tabBarActive"></tabBar> -->
 	</view>
 </template>
 
 <script>
-	import tabBar from '../../components/footer.vue';
+	// import tabBar from '../../components/footer.vue';
 	import uniNoticeBar from '@/components/uni-notice-bar/uni-notice-bar.vue'
 	export default {
 		components: {
-			tabBar,
+			// tabBar,
 			uniNoticeBar
 		},
 		data() {
